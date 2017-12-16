@@ -1,0 +1,30 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij" version "0.2.17"
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+
+intellij {
+    localPath 'C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2017.2.5'
+    plugins 'coverage' //Bundled plugin dependencies
+    pluginName 'plugin_name_goes_here'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.0'
+}
+
+group 'org.jetbrains'
+version '1.2' // Plugin version
