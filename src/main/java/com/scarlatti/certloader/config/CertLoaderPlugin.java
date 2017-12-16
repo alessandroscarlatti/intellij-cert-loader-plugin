@@ -13,19 +13,19 @@ public class CertLoaderPlugin implements ApplicationComponent {
     @Override
     public void initComponent() {
         System.out.println("initComponent called");
-        ActionManager am = ActionManager.getInstance();
+        ActionManager actionManager = ActionManager.getInstance();
         CertLoaderAction certLoaderAction = new CertLoaderAction();
 
         // Passes an instance of your custom action class to the registerAction method of the ActionManager class.
-        am.registerAction("MyPluginAction", certLoaderAction);
+        actionManager.registerAction("CertLoaderAction", certLoaderAction);
 
         // Gets an instance of the WindowMenu action group.
         // "WindowMenu" is exact!
-        DefaultActionGroup windowM = (DefaultActionGroup) am.getAction("ViewMenu");
+        DefaultActionGroup viewMenu = (DefaultActionGroup) actionManager.getAction("ViewMenu");
 
         // Adds a separator and a new menu command to the WindowMenu group on the main menu.
-        windowM.addSeparator();
-        windowM.add(certLoaderAction);
+        viewMenu.addSeparator();
+        viewMenu.add(certLoaderAction);
     }
 
     @NotNull
