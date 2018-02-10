@@ -23,10 +23,10 @@ public class NativePorcelainDemo {
 			System.err.println("Sorry, this only works on Windows");
 			JOptionPane.showMessageDialog(null, "Sorry this only works on Windows",
 					"OS not supported", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
+//			System.exit(1);
 		}
 
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		final JFrame frame = new JFrame(NativePorcelainDemo.class.getName());
 		final JPanel content = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
@@ -57,7 +57,7 @@ public class NativePorcelainDemo {
 		frame.pack();
 		frame.setSize(frame.getWidth() * 2, frame.getHeight());
 		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);
 	}
 }

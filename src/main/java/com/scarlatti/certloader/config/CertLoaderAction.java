@@ -1,7 +1,12 @@
 package com.scarlatti.certloader.config;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.options.newEditor.SettingsDialog;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.scarlatti.certloader.plugin.PluginStateWrapper;
 
 /**
  * ~     _____                                    __
@@ -13,8 +18,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
  */
 public class CertLoaderAction extends AnAction {
 
+    private final String NUMBER_PROPERTY_NAME = "com.scarlatti.certLoader.number";
+
     public CertLoaderAction() {
-        super("XSD Highlighting");
+        super("Install SSL Certificate...");
     }
 
     /**
@@ -23,7 +30,38 @@ public class CertLoaderAction extends AnAction {
      */
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        javax.swing.JOptionPane.showMessageDialog(null, "What!");
+        performActionWithPersistentStateImplementation();
+        showDialog();
+    }
+
+    private void showDialog() {
+        DialogBuilder builder = new DialogBuilder();
+        builder.setCenterPanel(new CertLoaderDialog());
+        builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
+        builder.setTitle("Tail File settings");
+        builder.removeAllActions();
+        builder.addOkAction();
+        builder.addCancelAction();
+
+        builder.show();
+    }
+
+    private void performActionWithPersistentStateImplementation() {
+        PluginStateWrapper pluginStateWrapper = ServiceManager.getService(PluginStateWrapper.class);
+
+        String mostRecentUrl = pluginStateWrapper.getState().getMostRecentUrl();
+
+        String newUrl = javax.swing.JOptionPane.showInputDialog("Provide URL: ", mostRecentUrl);
+
+        pluginStateWrapper.getState().setMostRecentUrl(newUrl);
+    }
+
+    private void performActionWithProperties() {
+        // try to get the stored value if it exists
+        Integer val = PropertiesComponent.getInstance().getInt(NUMBER_PROPERTY_NAME, 0);
+
+        javax.swing.JOptionPane.showMessageDialog(null, val);
+        PropertiesComponent.getInstance().setValue(NUMBER_PROPERTY_NAME, val + 1, -1);
     }
 
     @Override
