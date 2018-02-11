@@ -1,8 +1,8 @@
 package com.scarlatti.certloader.ui;
 
+import com.scarlatti.certloader.plugin.LoadAction;
 import com.scarlatti.certloader.ui.controls.CertList;
 import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
-import com.scarlatti.certloader.ui.controls.CertLoaderDialogOld;
 import com.scarlatti.certloader.ui.controls.URLToolbar;
 import com.scarlatti.certloader.ui.model.Cert;
 import org.junit.Test;
@@ -31,31 +31,50 @@ public class CertLoaderDialogTest {
             );
 
             CertLoaderDialog certLoaderDialog = new CertLoaderDialog();
-            certLoaderDialog.getUrlToolbar().setLoadAction(new URLToolbar.LoadAction() {
+            certLoaderDialog.getUrlToolbar().setLoadAction(new URLToolbar.AbstractLoadAction() {
+
+                Thread loadingThread;
+
                 @Override
-                public void load(String url, ActionCompletedCallback callback) {
+                public void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
                     // do loading here...
 
-                    new Thread(() -> {
+                    loadingThread = new Thread(() -> {
                         certLoaderDialog.getCertListWrapper().loading();
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                            callback.callback();
+                            return;
                         }
                         certLoaderDialog.getCertListWrapper().listCerts(url, certs, CertList.noOpInstallCallback());
                         callback.callback();
-                    }).start();
+                    });
 
-
-
+                    loadingThread.start();
                 }
 
                 @Override
                 public void cancel(ActionCompletedCallback callback) {
                     // cancel loading here...
+                    loadingThread.interrupt();
+                    certLoaderDialog.getCertListWrapper().hidden();
+                    callback.callback();
                 }
             });
+
+            return certLoaderDialog.getJPanel();
+        });
+    }
+
+    @Test
+    public void testDownloadCerts() {
+        TestUtils.DisplayJPanel(() -> {
+            CertLoaderDialog certLoaderDialog = new CertLoaderDialog();
+            certLoaderDialog.getUrlToolbar().setLoadAction(
+                new LoadAction(certLoaderDialog.getCertListWrapper())
+            );
 
             return certLoaderDialog.getJPanel();
         });

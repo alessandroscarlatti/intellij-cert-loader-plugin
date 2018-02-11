@@ -20,14 +20,22 @@ public class CertListWrapper implements UIComponent {
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
     }
 
+    public void hidden() {
+        jPanel.removeAll();
+        jPanel.revalidate();
+    }
+
     /**
      * Display the progress bar.
      * Utilize callbacks to alert when progress complete.
      */
     public void loading() {
         jPanel.removeAll();
-        jPanel.add(new CertListLoadingProgress().getJPanel());
+        CertListLoadingProgress progressBar = new CertListLoadingProgress();
+        jPanel.add(progressBar.getJPanel());
         jPanel.revalidate();
+
+        progressBar.load(5000);
     }
 
     /**

@@ -101,7 +101,7 @@ public class CertList implements UIComponent {
         columnModel.addColumn(new TableColumn(1));
         columnModel.getColumn(0).setHeaderValue("Install");
         columnModel.getColumn(0).setMaxWidth(50);
-        columnModel.getColumn(1).setHeaderValue("Name");
+        columnModel.getColumn(1).setHeaderValue("Certificate");
 
         table.setColumnModel(columnModel);
         table.putClientProperty("terminateEditOnFocusLost", true);

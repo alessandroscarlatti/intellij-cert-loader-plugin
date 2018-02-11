@@ -15,8 +15,33 @@ public class CertListLoadingProgress implements UIComponent {
     private JProgressBar progressBar;
     private JPanel jPanel;
 
+    private Thread progressBarThread;
+
     @Override
     public JPanel getJPanel() {
         return jPanel;
+    }
+
+    public void load(final int timeoutMs) {
+        progressBar.setMaximum(timeoutMs);
+
+        progressBarThread = new Thread(() -> {
+            final int REFRESH_RATE_MS = 15;
+
+            for (int i = 0; i * REFRESH_RATE_MS < timeoutMs; i++) {
+                try {
+                    progressBar.setValue(i * (timeoutMs / (timeoutMs / REFRESH_RATE_MS)));
+                    Thread.sleep(REFRESH_RATE_MS);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        });
+
+        progressBarThread.start();
+    }
+
+    public void stop() {
+        progressBarThread.interrupt();
     }
 }

@@ -18,7 +18,7 @@ public class URLToolbar implements UIComponent {
     private JPanel jPanel;
 
     private boolean loading = false;
-    private LoadAction loadAction = noOpLoadAction();
+    private AbstractLoadAction loadAction = noOpLoadAction();
 
     public URLToolbar() {
         setupButton();
@@ -38,7 +38,7 @@ public class URLToolbar implements UIComponent {
         }
     }
 
-    public URLToolbar(LoadAction loadAction) {
+    public URLToolbar(AbstractLoadAction loadAction) {
         this.loadAction = loadAction;
     }
 
@@ -47,6 +47,8 @@ public class URLToolbar implements UIComponent {
 
         // ... and do the loading stuff here...
         loadAction.load(url.getText(), () -> {
+            setLoading(false);
+        }, () -> {
             setLoading(false);
         });
     }
@@ -84,8 +86,8 @@ public class URLToolbar implements UIComponent {
         return jPanel;
     }
 
-    public static abstract class LoadAction {
-        public abstract void load(String url, ActionCompletedCallback callback);
+    public static abstract class AbstractLoadAction {
+        public abstract void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback);
         public abstract void cancel(ActionCompletedCallback callback);
 
         @FunctionalInterface
@@ -94,10 +96,10 @@ public class URLToolbar implements UIComponent {
         }
     }
 
-    public static LoadAction noOpLoadAction() {
-        return new LoadAction() {
+    public static AbstractLoadAction noOpLoadAction() {
+        return new AbstractLoadAction() {
             @Override
-            public void load(String url, ActionCompletedCallback callback) {
+            public void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
                 new Thread(() -> {
                     try {
                         Thread.sleep(4000);
@@ -124,11 +126,11 @@ public class URLToolbar implements UIComponent {
         };
     }
 
-    public LoadAction getLoadAction() {
+    public AbstractLoadAction getLoadAction() {
         return loadAction;
     }
 
-    public void setLoadAction(LoadAction loadAction) {
+    public void setLoadAction(AbstractLoadAction loadAction) {
         this.loadAction = loadAction;
     }
 }
