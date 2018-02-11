@@ -44,7 +44,10 @@ public class CertLoaderDialogTest {
                             e.printStackTrace();
                         }
                         certLoaderDialog.getCertListWrapper().listCerts(url, certs, CertList.noOpInstallCallback());
+                        callback.callback();
                     }).start();
+
+
 
                 }
 

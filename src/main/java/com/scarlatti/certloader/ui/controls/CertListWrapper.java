@@ -27,6 +27,7 @@ public class CertListWrapper implements UIComponent {
     public void loading() {
         jPanel.removeAll();
         jPanel.add(new CertListLoadingProgress().getJPanel());
+        jPanel.revalidate();
     }
 
     /**
@@ -35,6 +36,7 @@ public class CertListWrapper implements UIComponent {
     public void listCerts(String url, List<Cert> certs, CertList.InstallCallback installCallback) {
         jPanel.removeAll();
         jPanel.add(new CertList(url, certs, installCallback).getJPanel());
+        jPanel.revalidate();
     }
 
     @Override
