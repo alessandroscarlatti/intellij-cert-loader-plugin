@@ -9,7 +9,7 @@ package com.scarlatti.certloader.plugin;
  * ~  Tuesday, 12/12/2017
  */
 
-import com.scarlatti.certloader.config.CertLoaderDialog;
+import com.scarlatti.certloader.ui.controls.CertLoaderDialogOld;
 import com.scarlatti.certloader.ssl.SavingTrustManager;
 import com.scarlatti.certloader.ssl.Utils;
 
@@ -26,6 +26,7 @@ import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static com.scarlatti.certloader.ssl.Utils.newKeyStore;
 import static com.scarlatti.certloader.ssl.Utils.newTrustManager;
@@ -60,7 +61,7 @@ public class CertInstaller {
 
         Props props = new Props();
 
-        processURL(CertLoaderDialog.getInstance().getUrlTextBox().getText(), props);
+        processURL(CertLoaderDialogOld.getInstance().getUrlTextBox().getText(), props);
 
         performSSLHandshake(props);
 
@@ -85,7 +86,7 @@ public class CertInstaller {
 //            }
 //        }
 
-        JOptionPane.showMessageDialog(null, "Installed " + certsChosen.size() + " certificate(s).", "Success", JOptionPane.INFORMATION_MESSAGE);
+//        JOptionPane.showMessageDialog(null, "Installed " + certsChosen.size() + " certificate(s).", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
     protected void processURL(String url, Props props) {
@@ -101,15 +102,18 @@ public class CertInstaller {
         SSLSocketFactory factory = sslContext.getSocketFactory();
 
         System.out.println("Opening connection to " + props.getHost() + ":" + props.getPort() + "...");
-        JDialog jDialog = new JDialog();
-        Container content = jDialog.getContentPane();
-        content.setLayout(new BoxLayout(content, BoxLayout.X_AXIS));
+//        JDialog jDialog = new JDialog();
+//        Container content = jDialog.getContentPane();
+//        content.setLayout(new BoxLayout(content, BoxLayout.X_AXIS));
         JProgressBar progressBar = new JProgressBar();
         progressBar.setMaximum(SSL_CONNECTION_TIMEOUT_MS);
-        content.add(progressBar);
-        jDialog.setSize(300, 100);
-        jDialog.setTitle("Connecting to " + props.getHost() + " on port " + props.getPort() + "...");
-        jDialog.setVisible(true);
+        CertLoaderDialogOld.getInstance().getCertsPanel().removeAll();
+        CertLoaderDialogOld.getInstance().getCertsPanel().add(progressBar);
+        CertLoaderDialogOld.getInstance().getCertLoaderDialog().revalidate();
+
+//        jDialog.setSize(300, 100);
+//        jDialog.setTitle("Connecting to " + props.getHost() + " on port " + props.getPort() + "...");
+//        jDialog.setVisible(true);
 
         Thread progressBarThread = new Thread(() -> {
             final int REFRESH_RATE_MS = 15;
@@ -117,39 +121,58 @@ public class CertInstaller {
             for (int i = 0; i * REFRESH_RATE_MS < SSL_CONNECTION_TIMEOUT_MS; i++) {
                 try {
                     progressBar.setValue(i * (SSL_CONNECTION_TIMEOUT_MS / (SSL_CONNECTION_TIMEOUT_MS / REFRESH_RATE_MS)));
+                    CertLoaderDialogOld.getInstance().getCertsPanel().revalidate();
                     Thread.sleep(REFRESH_RATE_MS);
                 } catch (InterruptedException e) {
                     break;
                 }
             }
+
+
         });
 
-        try {
-            progressBarThread.start();
+        CountDownLatch latch = new CountDownLatch(1);
 
-            SSLSocket socket = (SSLSocket) factory.createSocket(props.getHost(), props.getPort());
-            socket.setSoTimeout(SSL_CONNECTION_TIMEOUT_MS);
+        new Thread(() -> {
             try {
-                System.out.println("Starting SSL handshake...");
+                progressBarThread.start();
 
-                // display progress bar here...
-                socket.startHandshake();
-                socket.close();
-                System.out.println();
-                System.out.println("No errors, certificate is already trusted");
-            } catch (SSLException e) {
-                System.out.println();
-                e.printStackTrace(System.out);
+                SSLSocket socket = (SSLSocket) factory.createSocket(props.getHost(), props.getPort());
+                socket.setSoTimeout(SSL_CONNECTION_TIMEOUT_MS);
+                try {
+                    System.out.println("Starting SSL handshake...");
+
+                    // display progress bar here...
+                    Thread.sleep(2000);
+                    socket.startHandshake();
+                    socket.close();
+                    System.out.println();
+                    System.out.println("No ,errors, certificate is already trusted");
+                } catch (SSLException e) {
+                    System.out.println();
+                    e.printStackTrace(System.out);
+                }
+            } catch (Exception e) {
+                progressBarThread.interrupt();
+                showErrorDialog("Error", "Error connecting to host " + props.getHost() + " on port " +
+                    props.getPort() + ".", e);
+                throw new ProcessAbortedException("Error connecting to host.", e);
+            } finally {
+                // hide progress bar here...
+                CertLoaderDialogOld.getInstance().getCertsPanel().removeAll();
+                CertLoaderDialogOld.getInstance().getCertsPanel().revalidate();
+                CertLoaderDialogOld.getInstance().getCertsPanel().repaint();
+//            jDialog.dispose();
+                latch.countDown();
             }
-        } catch (Exception e) {
-            progressBarThread.interrupt();
-            showErrorDialog("Error", "Error connecting to host " + props.getHost() + " on port " +
-                props.getPort() + ".", e);
-            throw new ProcessAbortedException("Error connecting to host.", e);
-        } finally {
-            // hide progress bar here...
-            jDialog.dispose();
+        }).start();
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new ProcessAbortedException("Countdown latch interrupted!", e);
         }
+
     }
 
     protected void showErrorDialog(String title, String message, Exception e) {
@@ -225,13 +248,18 @@ public class CertInstaller {
         List<JCheckBox> checkBoxes = new ArrayList<>();
         List<X509Certificate> certsChosen = new ArrayList<>();
 
+        CertLoaderDialogOld.getInstance().getCertsPanel().removeAll();
+
         for (X509Certificate cert : certs) {
             JCheckBox jCheckBox = new JCheckBox();
             jCheckBox.setText(cert.getSubjectDN().toString());
             jCheckBox.setSelected(true);
-            CertLoaderDialog.getInstance().getCertsPanel().add(jCheckBox);
+
+            CertLoaderDialogOld.getInstance().getCertsPanel().add(jCheckBox);
             checkBoxes.add(jCheckBox);
         }
+
+        CertLoaderDialogOld.getInstance().getCertLoaderDialog().revalidate();
 
         String[] options = new String[]{"Install Selected Certificates", "Cancel"};
 

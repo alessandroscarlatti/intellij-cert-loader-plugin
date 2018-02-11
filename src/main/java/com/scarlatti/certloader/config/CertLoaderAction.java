@@ -4,9 +4,11 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.options.newEditor.SettingsDialog;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.scarlatti.certloader.ui.controls.CertLoaderDialogOld;
 import com.scarlatti.certloader.plugin.PluginStateWrapper;
+
+import javax.swing.*;
 
 /**
  * ~     _____                                    __
@@ -30,15 +32,18 @@ public class CertLoaderAction extends AnAction {
      */
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        performActionWithPersistentStateImplementation();
+//        performActionWithPersistentStateImplementation();
         showDialog();
     }
 
     private void showDialog() {
+
+        JPanel certLoaderDialog = new CertLoaderDialogOld().getCertLoaderDialog();
+
         DialogBuilder builder = new DialogBuilder();
-        builder.setCenterPanel(new CertLoaderDialog());
-        builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
-        builder.setTitle("Tail File settings");
+        builder.setCenterPanel(certLoaderDialog);
+        builder.setDimensionServiceKey("CertLoaderPluginDialog");
+        builder.setTitle("title");
         builder.removeAllActions();
         builder.addOkAction();
         builder.addCancelAction();
