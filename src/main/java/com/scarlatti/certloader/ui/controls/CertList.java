@@ -12,9 +12,17 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.awt.Cursor.HAND_CURSOR;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -30,8 +38,10 @@ public class CertList implements UIComponent {
     private JButton selectNoneButton;
     private JButton selectAllButton;
     private JButton installButton;
+    private JLabel urlLink;
     private DefaultTableModel model;
 
+    private String url;
     private List<Cert> certs = new ArrayList<>();
     private InstallCallback installCallback = noOpInstallCallback();
     private boolean enabled = true;
@@ -39,7 +49,7 @@ public class CertList implements UIComponent {
 
     public CertList() {
         setupTable();
-        setupTitle("<url>");
+        setupTitle("www.google.com");
         setupButtons();
     }
 
@@ -59,7 +69,8 @@ public class CertList implements UIComponent {
     }
 
     private void setupTitle(String url) {
-        title.setText("SSL Certificates | " + url);
+        this.url = url;
+        urlLink.setText("<html><u>" + url + "</u></html>");
     }
 
     private void setupTable() {
@@ -105,14 +116,24 @@ public class CertList implements UIComponent {
 
         table.setColumnModel(columnModel);
         table.putClientProperty("terminateEditOnFocusLost", true);
-
-
     }
 
     private void setupButtons() {
         selectNoneButton.addActionListener(this::selectNone);
         selectAllButton.addActionListener(this::selectAll);
         installButton.addActionListener(this::installCerts);
+
+        urlLink.setCursor(new Cursor(HAND_CURSOR));
+        urlLink.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI(url));
+                } catch (Exception exc) {
+                    exc.printStackTrace();
+                }
+            }
+        });
     }
 
     private void selectNone(ActionEvent e) {

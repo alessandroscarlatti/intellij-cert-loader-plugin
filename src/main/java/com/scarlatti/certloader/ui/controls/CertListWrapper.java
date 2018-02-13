@@ -47,6 +47,12 @@ public class CertListWrapper implements UIComponent {
         jPanel.revalidate();
     }
 
+    public void error(String url, Exception e) {
+        jPanel.removeAll();
+        jPanel.add(new CertLoadingError("Error Connecting to <" + url + ">", e).getJPanel());
+        jPanel.revalidate();
+    }
+
     @Override
     public JPanel getJPanel() {
         return jPanel;

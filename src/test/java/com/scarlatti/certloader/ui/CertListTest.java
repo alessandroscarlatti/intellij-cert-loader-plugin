@@ -67,7 +67,7 @@ public class CertListTest {
 
         TestUtils.DisplayJPanel(() -> {
 
-            CertList certList = new CertList("what.com", certs);
+            CertList certList = new CertList("www.google.com", certs);
             certList.setEnabled(false);
 
             return certList.getJPanel();

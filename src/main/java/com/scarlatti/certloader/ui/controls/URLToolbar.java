@@ -21,19 +21,18 @@ public class URLToolbar implements UIComponent {
     private AbstractLoadAction loadAction = noOpLoadAction();
 
     public URLToolbar() {
-        setupButton();
+        setupListeners();
     }
 
-    private void setupButton() {
-        downloadButton.addActionListener(this::onDownloadButtonClick);
+    private void setupListeners() {
+        downloadButton.addActionListener(this::doStartDownload);
+        url.addActionListener(this::doStartDownload);
     }
 
-    private void onDownloadButtonClick(ActionEvent e) {
+    private void doStartDownload(ActionEvent e) {
         if (loading) {
-            System.out.println("Clicked Cancel.");
             cancel();
         } else {
-            System.out.println("Clicked Download.");
             load();
         }
     }

@@ -33,6 +33,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
     public void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
         // do loading here...
 
+        // TODO why does this need to be a thread??
         loadingThread = new Thread(() -> {
 
             try {
@@ -57,13 +58,8 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
                 certListWrapper.hidden();
             } catch (SSLConnectionException e) {
                 e.printStackTrace();
-
-                new Thread(() -> {
-                    showErrorDialog("Error", e.getMessage(), e);
-                }).start();
-
                 errorCallback.callback();
-                certListWrapper.hidden();
+                certListWrapper.error(url, e);
             }
         });
 
@@ -77,25 +73,6 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
         certListWrapper.hidden();
         callback.callback();
     }
-
-    public static void showErrorDialog(String title, String message, Exception e) {
-        StringBuilder sb = new StringBuilder(message);
-        sb.append(e.getMessage());
-        sb.append("\n");
-        StringWriter errors = new StringWriter();
-        e.printStackTrace(new PrintWriter(errors));
-        sb.append(errors.toString());
-        JTextArea jta = new JTextArea(sb.toString());
-        JScrollPane jsp = new JScrollPane(jta){
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(480, 320);
-            }
-        };
-        JOptionPane.showMessageDialog(
-            null, jsp, title, JOptionPane.ERROR_MESSAGE);
-    }
-
 
     /**
      * Convert to View Model certs.  TODO get the correct info!
