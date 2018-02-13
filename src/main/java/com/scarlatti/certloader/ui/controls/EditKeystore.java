@@ -12,7 +12,7 @@ public class EditKeystore extends JDialog implements UIComponent {
     private JTextField nameField;
     private JButton chooseKeystoreButton;
     private JTextField pathField;
-    private JTextField passwordField;
+    private JPasswordField passwordField;
 
     public EditKeystore() {
         setContentPane(jPanel);
