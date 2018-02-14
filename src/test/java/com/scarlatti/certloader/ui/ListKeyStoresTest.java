@@ -33,6 +33,15 @@ public class ListKeyStoresTest {
         });
     }
 
+    @Test
+    public void displayDialogDisabled() {
+        TestUtils.DisplayJPanel(() -> {
+            ListKeyStores listKeyStores = new ListKeyStores(Data.keyStores());
+            listKeyStores.disabledMode();
+            return listKeyStores.getJPanel();
+        });
+    }
+
     public static class Data {
 
         public static List<KeyStore> keyStores() {

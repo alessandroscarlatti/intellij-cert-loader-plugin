@@ -37,6 +37,7 @@ public class ListKeyStores implements UIComponent {
     private JButton removeButton;
     private JButton editButton;
     private JButton testInstallButton;
+    private JPanel editToolbar;
 
     private DefaultTableModel model;
     private List<KeyStore> keyStores = new ArrayList<>();
@@ -106,6 +107,30 @@ public class ListKeyStores implements UIComponent {
         table.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
 
+
+    public void normalMode() {
+        for (Component component : jPanel.getComponents()) {
+            component.setEnabled(false);
+        }
+
+        for (Component component : editToolbar.getComponents()) {
+            component.setEnabled(true);
+        }
+
+        table.setEnabled(true);
+    }
+
+    public void disabledMode() {
+        for (Component component : jPanel.getComponents()) {
+            component.setEnabled(false);
+        }
+
+        for (Component component : editToolbar.getComponents()) {
+            component.setEnabled(false);
+        }
+
+        table.setEnabled(false);
+    }
 
     private void selectNone(ActionEvent e) {
         for (int i = 0; i < model.getRowCount(); i++) {
