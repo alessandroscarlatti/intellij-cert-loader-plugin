@@ -18,9 +18,17 @@ import java.util.List;
 public class ListKeyStoresTest {
 
     @Test
-    public void displayDialog() {
+    public void displayDialogInTest() {
         TestUtils.DisplayJPanel(() -> {
             ListKeyStores listKeyStores = new ListKeyStores(Data.keyStores(), Collections.singletonList("test"));
+            return listKeyStores.getJPanel();
+        });
+    }
+
+    @Test
+    public void displayDialogInProd() {
+        TestUtils.DisplayJPanel(() -> {
+            ListKeyStores listKeyStores = new ListKeyStores(Data.keyStores());
             return listKeyStores.getJPanel();
         });
     }

@@ -127,12 +127,11 @@ public class ListKeyStores implements UIComponent {
 
     private void editSelectedKeyStore(ActionEvent e) {
         // need to test if selection is a single row...
-
-        List<KeyStore> selectedKeyStores = getSelectedKeyStores();
+        List<TableModelKeyStoreWrapper> selectedKeyStores = getSelectedKeyStores();
 
         if (selectedKeyStores.size() == 1) {
-            KeyStore editedKeyStore = getEditedKeyStore(selectedKeyStores.get(0));
-            updateKeyStore(editedKeyStore);
+            KeyStore editedKeyStore = getEditedKeyStore(selectedKeyStores.get(0).getKeyStore());
+            updateKeyStore(selectedKeyStores.get(0).getModelIndex(), editedKeyStore);
         }
     }
 
@@ -156,6 +155,7 @@ public class ListKeyStores implements UIComponent {
         selectAllButton.addActionListener(this::selectAll);
         addButton.addActionListener(this::addNewKeyStore);
         removeButton.addActionListener(this::removeSelectedKeyStores);
+        editButton.addActionListener(this::editSelectedKeyStore);
         restoreDefaultsButton.addActionListener(this::restoreDefaults);
 
         if (!envs.contains("test")) {
@@ -181,6 +181,8 @@ public class ListKeyStores implements UIComponent {
     }
 
     public void replaceKeyStore(KeyStore keyStore, int modelIndex) {
+        keyStores.remove(modelIndex);
+        keyStores.add(modelIndex, keyStore);
         model.setValueAt(keyStore.isSelected(), modelIndex, 0);
         model.setValueAt(keyStore.getName(), modelIndex, 1);
         model.setValueAt(keyStore.getPath(), modelIndex, 2);
@@ -190,6 +192,7 @@ public class ListKeyStores implements UIComponent {
         for (int i = model.getRowCount() - 1; i > -1; i--) {
             int actualIndex = table.convertRowIndexToView(i);
             model.removeRow(actualIndex);
+            keyStores.remove(actualIndex);
         }
     }
 
@@ -220,8 +223,10 @@ public class ListKeyStores implements UIComponent {
             int actualIndex = table.convertRowIndexToView(i);
 
             boolean selected = (actualIndex >= selectionModel.getMinSelectionIndex() && actualIndex <= selectionModel.getMaxSelectionIndex());
-            if (selected)
+            if (selected) {
                 model.removeRow(actualIndex);
+                keyStores.remove(actualIndex);
+            }
         }
     }
 
@@ -229,8 +234,8 @@ public class ListKeyStores implements UIComponent {
         System.out.println(getCheckedKeyStores());
     }
 
-    public List<KeyStore> getSelectedKeyStores() {
-        List<KeyStore> selectedKeyStores = new ArrayList<>();
+    public List<TableModelKeyStoreWrapper> getSelectedKeyStores() {
+        List<TableModelKeyStoreWrapper> selectedKeyStores = new ArrayList<>();
 
         ListSelectionModel selectionModel = table.getSelectionModel();
 
@@ -239,7 +244,8 @@ public class ListKeyStores implements UIComponent {
                 int actualIndex = table.convertRowIndexToView(i);
                 boolean selected = (actualIndex >= selectionModel.getMinSelectionIndex() && actualIndex <= selectionModel.getMaxSelectionIndex());
                 if (selected) {
-                    selectedKeyStores.add(keyStores.get(i));
+                    selectedKeyStores.add(
+                        new TableModelKeyStoreWrapper(keyStores.get(i), i));
                 }
             }
         }
@@ -277,6 +283,33 @@ public class ListKeyStores implements UIComponent {
     @Override
     public JPanel getJPanel() {
         return jPanel;
+    }
+
+    private static class TableModelKeyStoreWrapper {
+
+        private KeyStore keyStore;
+        private int modelIndex;
+
+        public TableModelKeyStoreWrapper(KeyStore keyStore, int modelIndex) {
+            this.keyStore = keyStore;
+            this.modelIndex = modelIndex;
+        }
+
+        public KeyStore getKeyStore() {
+            return keyStore;
+        }
+
+        public void setKeyStore(KeyStore keyStore) {
+            this.keyStore = keyStore;
+        }
+
+        public int getModelIndex() {
+            return modelIndex;
+        }
+
+        public void setModelIndex(int modelIndex) {
+            this.modelIndex = modelIndex;
+        }
     }
 
     private static class Data {
