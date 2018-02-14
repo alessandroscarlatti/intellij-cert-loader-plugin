@@ -38,7 +38,6 @@ public class EditKeystoreTest {
     public void displayDialogAndEditDataPassedInWithClosing() {
         TestUtils.setDarculaLaf();
         EditKeystore dialog = new EditKeystore();
-        dialog.pack();
         dialog.setVisible(true);
     }
 

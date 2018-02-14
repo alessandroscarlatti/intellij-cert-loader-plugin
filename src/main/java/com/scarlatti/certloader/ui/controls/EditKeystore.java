@@ -4,6 +4,7 @@ import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.KeyStore;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,27 +22,47 @@ public class EditKeystore extends JDialog implements UIComponent {
     private SaveKeyStoreCallback callback = noOpSaveKeyStoreCallback();
 
     public EditKeystore() {
-        setContentPane(jPanel);
-        setModal(true);
-        getRootPane().setDefaultButton(saveButton);
-
-        setupActions();
-
         keyStore = defaultKeyStore();
+
+        initializeUI();
         initializeValues();
     }
 
     public EditKeystore(KeyStore keyStore) {
-        this();
         this.keyStore = keyStore;
+
+        initializeUI();
         initializeValues();
     }
 
     public EditKeystore(KeyStore keyStore, SaveKeyStoreCallback callback) {
-        this();
         this.keyStore = keyStore;
         this.callback = callback;
+
+        initializeUI();
         initializeValues();
+    }
+
+    public EditKeystore(JFrame parent, KeyStore keyStore, SaveKeyStoreCallback callback) {
+        super(parent);
+
+        this.keyStore = keyStore;
+        this.callback = callback;
+
+        initializeUI();
+        initializeValues();
+    }
+
+    private void initializeUI() {
+        setContentPane(jPanel);
+        setModal(true);
+        getRootPane().setDefaultButton(saveButton);
+        pack();
+        setMinimumSize(new Dimension(getWidth(), getHeight()));
+        setLocationRelativeTo(getOwner());
+        setTitle("Edit Keystore...");
+
+        setupActions();
     }
 
     /**
@@ -51,18 +72,26 @@ public class EditKeystore extends JDialog implements UIComponent {
      * @return the edited keystore, may be the same data as the original.
      * always a different instance.
      */
-    public static KeyStore editKeyStore(KeyStore original) {
+    public static KeyStore editKeyStore(KeyStore original, JFrame parentFrame) {
 
         AtomicReference<KeyStore> editedKeyStore = new AtomicReference<>(original);
         CountDownLatch latch = new CountDownLatch(1);
 
         new Thread(() -> {
-            new EditKeystore(new KeyStore(original), (KeyStore newKeyStore) -> {
+            EditKeystore dialog = new EditKeystore(parentFrame, new KeyStore(original), (KeyStore newKeyStore) -> {
                 editedKeyStore.set(newKeyStore);
                 latch.countDown();
             });
+
+            dialog.setVisible(true);
+            dialog.dispose();
         }).start();
 
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return editedKeyStore.get();
     }
 

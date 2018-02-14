@@ -10,10 +10,15 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -72,7 +77,13 @@ public class ListKeyStores implements UIComponent {
                 addTableModelListener(new TableModelListener() {
                     @Override
                     public void tableChanged(TableModelEvent e) {
-//                        evaluateInstallEnabled();
+                        if (e.getColumn() == 0 && e.getFirstRow() == e.getLastRow()) {
+                            int actualIndex = table.convertRowIndexToModel(e.getFirstRow());
+                            keyStores.get(actualIndex).setSelected(
+                                (Boolean) model.getValueAt(actualIndex, e.getColumn())
+                            );
+
+                        }
                     }
                 });
                 return this;
@@ -126,13 +137,15 @@ public class ListKeyStores implements UIComponent {
     }
 
     private void editSelectedKeyStore(ActionEvent e) {
-        // need to test if selection is a single row...
-        List<TableModelKeyStoreWrapper> selectedKeyStores = getSelectedKeyStores();
+        new Thread(() -> {
+            // need to test if selection is a single row...
+            List<TableModelKeyStoreWrapper> selectedKeyStores = getSelectedKeyStores();
 
-        if (selectedKeyStores.size() == 1) {
-            KeyStore editedKeyStore = getEditedKeyStore(selectedKeyStores.get(0).getKeyStore());
-            updateKeyStore(selectedKeyStores.get(0).getModelIndex(), editedKeyStore);
-        }
+            if (selectedKeyStores.size() == 1) {
+                KeyStore editedKeyStore = getEditedKeyStore(selectedKeyStores.get(0).getKeyStore(), (JFrame)this.jPanel.getRootPane().getParent());
+                updateKeyStore(selectedKeyStores.get(0).getModelIndex(), editedKeyStore);
+            }
+        }).start();
     }
 
     private void updateKeyStore(int selectionIndex, KeyStore keyStore) {
@@ -163,6 +176,18 @@ public class ListKeyStores implements UIComponent {
         } else {
             testInstallButton.addActionListener(this::testAskForKeyStores);
         }
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+//                JTable table =(JTable) mouseEvent.getSource();
+//                Point point = mouseEvent.getPoint();
+//                int viewRowIndex = table.rowAtPoint(point);
+                if (mouseEvent.getClickCount() == 2) {
+                    // your valueChanged overridden method
+                    editSelectedKeyStore(null);
+                }
+            }
+        });
     }
 
     public void addKeyStores(List<KeyStore> keyStores) {
@@ -268,11 +293,12 @@ public class ListKeyStores implements UIComponent {
         return keyStoresToUse;
     }
 
-    // TODO later call the real service
     public KeyStore getEditedKeyStore(KeyStore keyStore) {
-        KeyStore editedKeyStore = new KeyStore(keyStore);
-        editedKeyStore.setName(editedKeyStore.getName() + "a");
-        return editedKeyStore;
+        return EditKeystore.editKeyStore(keyStore, null);
+    }
+
+    public KeyStore getEditedKeyStore(KeyStore keyStore, JFrame parentFrame) {
+        return EditKeystore.editKeyStore(keyStore, parentFrame);
     }
 
     // TODO later call the real service
