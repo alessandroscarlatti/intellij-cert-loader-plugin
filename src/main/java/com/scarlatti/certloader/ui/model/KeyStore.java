@@ -23,6 +23,23 @@ public class KeyStore {
         this.password = password;
     }
 
+    public KeyStore(KeyStore other) {
+        this.selected = other.selected;
+        this.name = other.name;
+        this.path = other.path;
+        this.password = other.password;
+    }
+
+    @Override
+    public String toString() {
+        return "KeyStore{" +
+            "selected=" + selected +
+            ", name='" + name + '\'' +
+            ", path='" + path + '\'' +
+            ", password='" + password + '\'' +
+            '}';
+    }
+
     public String getName() {
         return name;
     }

@@ -42,7 +42,7 @@ public class TestUtils {
         }
     }
 
-    private static void setDarculaLaf() {
+    public static void setDarculaLaf() {
         try {
             UIManager.setLookAndFeel(new DarculaLaf());
         } catch (UnsupportedLookAndFeelException e) {

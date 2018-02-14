@@ -5,6 +5,7 @@ import com.scarlatti.certloader.ui.model.KeyStore;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,9 +19,10 @@ public class ListKeyStoresTest {
 
     @Test
     public void displayDialog() {
-        TestUtils.DisplayJPanel(() ->
-            new ListKeyStores(Data.keyStores()).getJPanel()
-        );
+        TestUtils.DisplayJPanel(() -> {
+            ListKeyStores listKeyStores = new ListKeyStores(Data.keyStores(), Collections.singletonList("test"));
+            return listKeyStores.getJPanel();
+        });
     }
 
     public static class Data {
