@@ -3,6 +3,7 @@ package com.scarlatti.certloader.ui;
 import com.intellij.ide.ui.laf.darcula.DarculaLaf;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.concurrent.CountDownLatch;
@@ -45,6 +46,8 @@ public class TestUtils {
     public static void setDarculaLaf() {
         try {
             UIManager.setLookAndFeel(new DarculaLaf());
+            UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(1,0,0,0));
+            UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }

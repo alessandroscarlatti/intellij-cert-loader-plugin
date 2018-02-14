@@ -17,8 +17,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -43,6 +41,11 @@ public class ListKeyStores implements UIComponent {
     private List<KeyStore> keyStores = new ArrayList<>();
 
     private List<String> envs = new ArrayList<>();
+
+    public ListKeyStores() {
+        setupTable();
+        setupButtons();
+    }
 
     public ListKeyStores(List<KeyStore> keyStores) {
         setupTable();

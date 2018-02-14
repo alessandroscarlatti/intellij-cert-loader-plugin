@@ -3,6 +3,7 @@ package com.scarlatti.certloader.ui.controls;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -16,6 +17,11 @@ public class CertLoaderDialog implements UIComponent {
     private JPanel jPanel;
     private URLToolbar urlToolbar;
     private CertListWrapper certListWrapper;
+    private JTabbedPane tabbedPane1;
+
+    public CertLoaderDialog() {
+        jPanel.setPreferredSize(new Dimension(640, 580));
+    }
 
     public URLToolbar getUrlToolbar() {
         return urlToolbar;
