@@ -25,6 +25,7 @@ repositories {
 dependencies {
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.0'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+    compile group: 'com.fasterxml.jackson.core', name: "jackson-databind", version: "2.9.4"
 }
 
 group 'org.jetbrains'

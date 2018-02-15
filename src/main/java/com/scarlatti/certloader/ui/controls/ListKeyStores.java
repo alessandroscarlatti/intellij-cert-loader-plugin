@@ -2,6 +2,7 @@ package com.scarlatti.certloader.ui.controls;
 
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.KeyStore;
+import com.scarlatti.certloader.ui.model.ValueProvider;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -25,7 +26,7 @@ import java.util.List;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Monday, 2/12/2018
  */
-public class ListKeyStores implements UIComponent {
+public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>> {
     private JPanel jPanel;
     private JTable table;
     private JButton selectNoneButton;
@@ -110,6 +111,16 @@ public class ListKeyStores implements UIComponent {
         table.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
 
+    @Override
+    public void setCurrent(List<KeyStore> newValue) {
+        removeAllKeyStores();
+        addKeyStores(newValue);
+    }
+
+    @Override
+    public List<KeyStore> getCurrent() {
+        return keyStores;
+    }
 
     public void normalMode() {
         for (Component component : jPanel.getComponents()) {
@@ -170,7 +181,7 @@ public class ListKeyStores implements UIComponent {
             List<TableModelKeyStoreWrapper> selectedKeyStores = getSelectedKeyStores();
 
             if (selectedKeyStores.size() == 1) {
-                KeyStore editedKeyStore = getEditedKeyStore(selectedKeyStores.get(0).getKeyStore(), (JFrame)this.jPanel.getRootPane().getParent());
+                KeyStore editedKeyStore = getEditedKeyStore(selectedKeyStores.get(0).getKeyStore(), () -> this.jPanel.getRootPane().getParent());
                 updateKeyStore(selectedKeyStores.get(0).getModelIndex(), editedKeyStore);
             }
         }).start();
@@ -325,7 +336,7 @@ public class ListKeyStores implements UIComponent {
         return EditKeystore.editKeyStore(keyStore, null);
     }
 
-    public KeyStore getEditedKeyStore(KeyStore keyStore, JFrame parentFrame) {
+    public KeyStore getEditedKeyStore(KeyStore keyStore, EditKeystore.ParentProvider parentFrame) {
         return EditKeystore.editKeyStore(keyStore, parentFrame);
     }
 

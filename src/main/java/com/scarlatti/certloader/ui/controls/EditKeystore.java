@@ -5,8 +5,10 @@ import com.scarlatti.certloader.ui.model.KeyStore;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.concurrent.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EditKeystore extends JDialog implements UIComponent {
@@ -53,6 +55,16 @@ public class EditKeystore extends JDialog implements UIComponent {
         initializeValues();
     }
 
+    public EditKeystore(Dialog parent, KeyStore keyStore, SaveKeyStoreCallback callback) {
+        super(parent);
+
+        this.keyStore = keyStore;
+        this.callback = callback;
+
+        initializeUI();
+        initializeValues();
+    }
+
     private void initializeUI() {
         setContentPane(jPanel);
         setModal(true);
@@ -72,16 +84,36 @@ public class EditKeystore extends JDialog implements UIComponent {
      * @return the edited keystore, may be the same data as the original.
      * always a different instance.
      */
-    public static KeyStore editKeyStore(KeyStore original, JFrame parentFrame) {
+    public static KeyStore editKeyStore(KeyStore original, ParentProvider parentProvider) {
 
         AtomicReference<KeyStore> editedKeyStore = new AtomicReference<>(original);
         CountDownLatch latch = new CountDownLatch(1);
 
         new Thread(() -> {
-            EditKeystore dialog = new EditKeystore(parentFrame, new KeyStore(original), (KeyStore newKeyStore) -> {
-                editedKeyStore.set(newKeyStore);
-                latch.countDown();
-            });
+            EditKeystore dialog = null;
+
+            Object parent = parentProvider.provideParent();
+
+            if (parent instanceof JFrame) {
+                dialog = new EditKeystore((JFrame) parent, new KeyStore(original), (KeyStore newKeyStore) -> {
+                    editedKeyStore.set(newKeyStore);
+                    latch.countDown();
+                });
+            }
+
+            if (parent instanceof Dialog) {
+                dialog = new EditKeystore((Dialog) parent, new KeyStore(original), (KeyStore newKeyStore) -> {
+                    editedKeyStore.set(newKeyStore);
+                    latch.countDown();
+                });
+            }
+
+            if (dialog == null) { // throw new RuntimeException("Parent is not a JFrame or Dialog");
+                dialog = new EditKeystore(new KeyStore(original), (KeyStore newKeyStore) -> {
+                    editedKeyStore.set(newKeyStore);
+                    latch.countDown();
+                });
+            }
 
             dialog.setVisible(true);
             dialog.dispose();
@@ -165,5 +197,10 @@ public class EditKeystore extends JDialog implements UIComponent {
     @FunctionalInterface
     public interface SaveKeyStoreCallback {
         void callback(KeyStore newKeyStore);
+    }
+
+    @FunctionalInterface
+    public interface ParentProvider {
+        Object provideParent();
     }
 }
