@@ -11,6 +11,9 @@ import org.jetbrains.annotations.Nullable;
  * __/ __ |/ / -_|_-<(_-</ _ `/ _ \/ _  / __/ _ \  _\ \/ __/ _ `/ __/ / _ `/ __/ __/ /
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Friday, 2/9/2018
+ *
+ * This class is generated as a singleton by IntelliJ during initialization.
+ * This configuration is provided in the plugin configuration xml.
  */
 @State(
     name = "CertLoader", storages = {
@@ -18,18 +21,18 @@ import org.jetbrains.annotations.Nullable;
         id = "com.scarlatti.certLoader",
         file = "$APP_CONFIG$/com.scarlatti.certLoader.xml")
 })
-public class PluginStateWrapper implements PersistentStateComponent<PluginState> {
+public class PluginStateWrapper implements PersistentStateComponent<AppState> {
 
-    private PluginState state = PluginState.defaultState();
+    private AppState state = AppState.defaultState();
 
     @Nullable
     @Override
-    public PluginState getState() {
+    public AppState getState() {
         return state;
     }
 
     @Override
-    public void loadState(final PluginState state) {
+    public void loadState(final AppState state) {
         this.state = state;
     }
 }

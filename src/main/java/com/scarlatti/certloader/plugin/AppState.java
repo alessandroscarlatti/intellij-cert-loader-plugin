@@ -7,16 +7,16 @@ package com.scarlatti.certloader.plugin;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Friday, 2/9/2018
  */
-public class PluginState {
+public class AppState {
     private String mostRecentUrl;
     private JVM mostRecentJVM;
 
-    public static PluginState defaultState() {
-        PluginState pluginState  = new PluginState();
-        pluginState.mostRecentUrl = "www.google.com";
-        pluginState.mostRecentJVM = new JVM("silly jvm", "C:/somewhere");
+    public static AppState defaultState() {
+        AppState appState = new AppState();
+        appState.mostRecentUrl = "www.google.com";
+        appState.mostRecentJVM = new JVM("silly jvm", "C:/somewhere");
 
-        return pluginState;
+        return appState;
     }
 
     public static class JVM {

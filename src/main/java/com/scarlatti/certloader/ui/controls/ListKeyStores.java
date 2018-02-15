@@ -79,16 +79,13 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
             }
 
             public DefaultTableModel init() {
-                addTableModelListener(new TableModelListener() {
-                    @Override
-                    public void tableChanged(TableModelEvent e) {
-                        if (e.getColumn() == 0 && e.getFirstRow() == e.getLastRow()) {
-                            int actualIndex = table.convertRowIndexToModel(e.getFirstRow());
-                            keyStores.get(actualIndex).setSelected(
-                                (Boolean) model.getValueAt(actualIndex, e.getColumn())
-                            );
+                addTableModelListener(e -> {
+                    if (e.getColumn() == 0 && e.getFirstRow() == e.getLastRow()) {
+                        int actualIndex = table.convertRowIndexToModel(e.getFirstRow());
+                        keyStores.get(actualIndex).setSelected(
+                            (Boolean) model.getValueAt(actualIndex, e.getColumn())
+                        );
 
-                        }
                     }
                 });
                 return this;

@@ -34,6 +34,8 @@ public class TestSaveDialogRunner {
             Collections.emptyList()
         );
 
+        TestUtils.setDarculaLaf();
+
         TestSaveDialog dialog = new TestSaveDialog(repo);
         dialog.pack();
         dialog.setVisible(true);
