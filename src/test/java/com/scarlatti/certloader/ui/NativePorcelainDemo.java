@@ -7,8 +7,9 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE.
  */
-package com.scarlatti.certloader.utils;
+package com.scarlatti.certloader.ui;
 
+import com.scarlatti.certloader.utils.WindowsFileChooser;
 import com.sun.jna.Platform;
 
 import javax.swing.*;
@@ -39,12 +40,12 @@ public class NativePorcelainDemo {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final WindowsFileChooser fc = new WindowsFileChooser();
-				fc.addFilter("All Files", "*");
-				fc.addFilter("Pictures", "jpg", "jpeg", "gif", "bmp", "png");
-				fc.addFilter("Text Files", "txt", "log", "nfo", "xml");
-				fc.setTitle("Choose Keystore");
-//				fc.setInitialFile("C:/Users/pc/Desktop/ReactTest1/package.json");
-				fc.setInitialDirectory("C:/Users/pc/Desktop/ReactTest1");
+				fc.withFilter("All Files", "*");
+				fc.withFilter("Pictures", "jpg", "jpeg", "gif", "bmp", "png");
+				fc.withFilter("Text Files", "txt", "log", "nfo", "xml");
+				fc.withTitle("Choose Keystore");
+//				fc.withInitialFile("C:/Users/pc/Desktop/ReactTest1/package.json");
+				fc.withInitialDirectory("C:/Users/pc/Desktop/ReactTest1");
 				if (fc.showOpenDialog(frame)) {
 					final File f = fc.getSelectedFile();
 					JOptionPane.showMessageDialog(frame, f.getAbsolutePath(),

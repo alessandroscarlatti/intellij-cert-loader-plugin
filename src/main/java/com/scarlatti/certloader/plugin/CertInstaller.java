@@ -112,7 +112,7 @@ public class CertInstaller {
         CertLoaderDialogOld.getInstance().getCertLoaderDialog().revalidate();
 
 //        jDialog.setSize(300, 100);
-//        jDialog.setTitle("Connecting to " + props.getHost() + " on port " + props.getPort() + "...");
+//        jDialog.withTitle("Connecting to " + props.getHost() + " on port " + props.getPort() + "...");
 //        jDialog.setVisible(true);
 
         Thread progressBarThread = new Thread(() -> {

@@ -15,6 +15,9 @@ import com.sun.jna.WString;
 
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -22,10 +25,10 @@ import java.util.ArrayList;
  *
  * Example:
  * WindowsFileChooser fc = new WindowsFileChooser("C:\\");
- * fc.addFilter("All Files", "*");
- * fc.addFilter("Text files", "txt", "log", "xml", "css", "html");
- * fc.addFilter("Source code", "java", "c", "cpp", "cc", "h", "hpp");
- * fc.addFilter("Binary files", "exe", "class", "jar", "dll", "so");
+ * fc.withFilter("All Files", "*");
+ * fc.withFilter("Text files", "txt", "log", "xml", "css", "html");
+ * fc.withFilter("Source code", "java", "c", "cpp", "cc", "h", "hpp");
+ * fc.withFilter("Binary files", "exe", "class", "jar", "dll", "so");
  * if (fc.showOpenDialog(parent)) {
  *     File f = fc.getSelectedFile();
  *     // do something with f
@@ -82,6 +85,10 @@ public class WindowsFileChooser
 	protected String initialDirectory;
 	protected String title;
 
+	protected boolean validateFileExists;
+
+	protected Window parent;
+
 	/**
 	 * creates a new file chooser
 	 */
@@ -127,18 +134,28 @@ public class WindowsFileChooser
 	 *               is the name of this filter and the remaining arguments
 	 *               are the file extensions.
 	 */
-	public void addFilter(String ... filter) {
+	public WindowsFileChooser withFilter(String ... filter) {
 		if (filter.length < 2) {
 			throw new IllegalArgumentException();
 		}
 		filters.add(filter);
+
+		return this;
 	}
 
 	/**
 	 * show the dialog for opening a file
 	 *
-	 * @param parent the parent window of the dialog
+	 * @return true if the user clicked ok, false otherwise
+	 */
+	public boolean showOpenDialog() {
+		return showDialog(parent, true);
+	}
+
+	/**
+	 * show the dialog for opening a file
 	 *
+	 * @param parent the parent window
 	 * @return true if the user clicked ok, false otherwise
 	 */
 	public boolean showOpenDialog(Window parent) {
@@ -178,7 +195,7 @@ public class WindowsFileChooser
 			// enable resizing of the dialog
 			| Comdlg32.OFN_ENABLESIZING;
 
-		params.hwndOwner = Native.getWindowPointer(parent);
+		if (parent != null) params.hwndOwner = Native.getWindowPointer(parent);
 
 		// lpstrFile contains the selection path after the dialog
 		// returns. It must be big enough for the path to fit or
@@ -314,27 +331,60 @@ public class WindowsFileChooser
 		return initialFile;
 	}
 
-	public void setInitialFile(String initialFile) {
+	public WindowsFileChooser withInitialFile(String initialFile) {
 		this.initialFile = initialFile.replace("/", "\\");
+		return this;
 	}
 
 	public String getInitialDirectory() {
 		return initialDirectory;
 	}
 
-	public void setInitialDirectory(String initialDirectory) {
+	public WindowsFileChooser withInitialDirectory(String initialDirectory) {
 		this.initialDirectory = initialDirectory.replace("/", "\\");
 
 		this.initialDirectory = this.initialDirectory.endsWith("\\") ?
 			this.initialDirectory :
 			this.initialDirectory + "\\";
+
+		return this;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public WindowsFileChooser withTitle(String title) {
 		this.title = title;
+		return this;
+	}
+
+	public WindowsFileChooser withParent(Window parent) {
+		this.parent = parent;
+		return this;
+	}
+
+	public WindowsFileChooser existingFilesOnly() {
+		this.validateFileExists = true;
+		return this;
+	}
+
+	/**
+	 * @return the selected file, or null if no file selected
+	 * @throws NoSuchFileException if invalid file selected
+	 */
+	public File prompt() throws NoSuchFileException {
+		File file = showOpenDialog() ? getSelectedFile() : null;
+		if (file != null && validateFileExists) {
+			if (!Files.exists(Paths.get(file.getAbsolutePath()))) {
+				throw new NoSuchFileException("No such file '" + file.getAbsolutePath() + "'");
+			}
+		}
+
+		return file;
+	}
+
+	public interface FileChosenCallback {
+		void callback(File file);
 	}
 }
