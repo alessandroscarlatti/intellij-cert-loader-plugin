@@ -44,12 +44,14 @@ public class URLToolbar implements UIComponent {
     public void load() {
         setLoading(true);
 
-        // ... and do the loading stuff here...
-        loadAction.load(url.getText(), () -> {
-            setLoading(false);
-        }, () -> {
-            setLoading(false);
-        });
+        new Thread(() -> {
+            // ... and do the loading stuff here...
+            loadAction.load(url.getText(), () -> {
+                setLoading(false);
+            }, () -> {
+                setLoading(false);
+            });
+        }).start();
     }
 
     public void cancel() {

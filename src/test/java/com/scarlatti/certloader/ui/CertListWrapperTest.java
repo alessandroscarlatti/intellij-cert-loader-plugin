@@ -22,7 +22,9 @@ public class CertListWrapperTest {
         TestUtils.DisplayJPanel(() -> {
             CertListWrapper wrapper = new CertListWrapper();
 
-            wrapper.loading();
+            wrapper.loading(() -> {
+                System.out.println("Timeout!");
+            });
 
             return wrapper.getJPanel();
         });

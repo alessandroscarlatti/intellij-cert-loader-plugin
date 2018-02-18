@@ -102,7 +102,6 @@ public class CertDownloader {
                     System.out.println("Starting SSL handshake...");
 
                     // display progress bar here...
-                    Thread.sleep(2000);
                     socket.startHandshake();
                     socket.close();
                     System.out.println();
@@ -118,7 +117,7 @@ public class CertDownloader {
             } finally {
                 latch.countDown();
             }
-        }).start();
+        }, "SSLHandshake").start();
 
         try {
             latch.await();

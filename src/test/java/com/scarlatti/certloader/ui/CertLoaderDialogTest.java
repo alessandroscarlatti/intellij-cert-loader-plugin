@@ -40,7 +40,9 @@ public class CertLoaderDialogTest {
                     // do loading here...
 
                     loadingThread = new Thread(() -> {
-                        certLoaderDialog.getCertListWrapper().loading();
+                        certLoaderDialog.getCertListWrapper().loading(() -> {
+                            System.out.println("Timeout!");
+                        });
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {

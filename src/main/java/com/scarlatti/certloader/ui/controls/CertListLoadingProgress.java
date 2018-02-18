@@ -16,15 +16,17 @@ public class CertListLoadingProgress implements UIComponent {
     private JPanel jPanel;
 
     private Thread progressBarThread;
+    private ThreadLocal<Boolean> timedOut;
 
     @Override
     public JPanel getJPanel() {
         return jPanel;
     }
 
-    public void load(final int timeoutMs) {
+    public void load(final int timeoutMs, Runnable timeoutCallback) {
         progressBar.setMaximum(timeoutMs);
 
+        // need a variable for this thread so that we can interrupt it later!
         progressBarThread = new Thread(() -> {
             final int REFRESH_RATE_MS = 15;
 
@@ -33,10 +35,13 @@ public class CertListLoadingProgress implements UIComponent {
                     progressBar.setValue(i * (timeoutMs / (timeoutMs / REFRESH_RATE_MS)));
                     Thread.sleep(REFRESH_RATE_MS);
                 } catch (InterruptedException e) {
-                    break;
+                    return;
                 }
             }
-        });
+
+            // now the timer has timed out...
+            timeoutCallback.run();
+        }, "ProgressBar");
 
         progressBarThread.start();
     }

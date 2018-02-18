@@ -5,10 +5,6 @@ import com.scarlatti.certloader.ui.controls.CertListWrapper;
 import com.scarlatti.certloader.ui.controls.URLToolbar;
 import com.scarlatti.certloader.ui.model.Cert;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,36 +28,39 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
     @Override
     public void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
         // do loading here...
-
-        // TODO why does this need to be a thread??
         loadingThread = new Thread(() -> {
-
             try {
-                certListWrapper.loading();
+                certListWrapper.loading(() -> {
+                    throw new ProcessAbortedException("Connection attempt timed out.");
+                });
 
                 List<X509Certificate> rawCerts = CertDownloader.downloadCerts(url);
                 List<Cert> certs = buildViewModelCerts(rawCerts);
 
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    callback.callback();
-                    return;
-                }
+//                try {
+//                    Thread.sleep(2000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                    certListWrapper.stopLoading();
+//                    callback.callback();
+//                    return;
+//                }
 
+                certListWrapper.stopLoading();
                 certListWrapper.listCerts(url, certs, CertList.noOpInstallCallback());
                 callback.callback();
             } catch (ProcessAbortedException e) {
                 e.printStackTrace();  // TODO when this is caught, we should fire off the cancel action
+                certListWrapper.stopLoading();
                 errorCallback.callback();
                 certListWrapper.hidden();
             } catch (SSLConnectionException e) {
                 e.printStackTrace();
+                certListWrapper.stopLoading();
                 errorCallback.callback();
                 certListWrapper.error(url, e);
             }
-        });
+        }, "LoadAction");
 
         loadingThread.start();
     }

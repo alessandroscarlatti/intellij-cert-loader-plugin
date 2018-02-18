@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class CertListWrapper implements UIComponent {
     private JPanel jPanel;
+    private CertListLoadingProgress progressBar;
 
     public CertListWrapper() {
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
@@ -30,13 +31,17 @@ public class CertListWrapper implements UIComponent {
      * Display the progress bar.
      * Utilize callbacks to alert when progress complete.
      */
-    public void loading() {
+    public void loading(Runnable onTimeout) {
         jPanel.removeAll();
-        CertListLoadingProgress progressBar = new CertListLoadingProgress();
+        progressBar = new CertListLoadingProgress();
         jPanel.add(progressBar.getJPanel());
         jPanel.revalidate();
 
-        progressBar.load(5000);
+        progressBar.load(1000, onTimeout);
+    }
+
+    public void stopLoading() {
+        progressBar.stop();
     }
 
     /**
