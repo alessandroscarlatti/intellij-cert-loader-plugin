@@ -1,8 +1,10 @@
 package com.scarlatti.certloader.ui;
 
 import com.scarlatti.certloader.utils.WindowsFileChooser;
+import oracle.jrockit.jfr.JFR;
 import org.junit.Test;
 
+import javax.swing.*;
 import java.io.File;
 import java.nio.file.NoSuchFileException;
 
@@ -46,6 +48,31 @@ public class FileChooserDialogTest {
             System.out.println("Selected file: " + selectedFile.getAbsolutePath());
         } catch (NoSuchFileException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void testFileChooserReturnValueWithParent() {
+        JFrame jFrame = new JFrame();
+
+        try {
+            jFrame.setVisible(true);
+
+            File selectedFile = new WindowsFileChooser()
+                .withFilter("All Files", "*")
+                .withTitle("Choose Keystore")
+                .withInitialFile("C:/Users/pc/Desktop/ReactTest1/package.json")
+                .withInitialDirectory("C:/Users/pc/Desktop/ReactTest1")
+                .withParent(jFrame)
+                .existingFilesOnly()
+                .prompt();
+
+            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+        } catch (NoSuchFileException e) {
+            e.printStackTrace();
+        } finally {
+            jFrame.dispose();
         }
     }
 }

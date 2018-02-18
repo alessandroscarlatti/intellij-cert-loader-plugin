@@ -2,12 +2,15 @@ package com.scarlatti.certloader.ui.controls;
 
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.KeyStore;
+import com.scarlatti.certloader.utils.WindowsFileChooser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.nio.file.NoSuchFileException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -130,6 +133,7 @@ public class EditKeystore extends JDialog implements UIComponent {
     private void setupActions() {
         saveButton.addActionListener(e -> onSave());
         cancelButton.addActionListener(e -> onCancel());
+        chooseKeystoreButton.addActionListener(e -> chooseKeystorePath());
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -172,6 +176,31 @@ public class EditKeystore extends JDialog implements UIComponent {
         // add your code here if necessary
         callback.callback(keyStore);
         dispose();
+    }
+
+    private void chooseKeystorePath() {
+
+        try {
+
+            jPanel.setEnabled(false);
+
+            File selectedFile = new WindowsFileChooser()
+                .withFilter("All Files", "*")
+                .withTitle("Choose Keystore")
+                .withInitialFile(pathField.getText())
+                .withInitialDirectory(new File(pathField.getText()).getParent())
+                .withParent(this)
+                .existingFilesOnly()
+                .prompt();
+
+            jPanel.setEnabled(true);
+
+            if (selectedFile != null) {
+                pathField.setText(selectedFile.getAbsolutePath());
+            }
+        } catch (NoSuchFileException e) {
+            e.printStackTrace();
+        }
     }
 
     private KeyStore defaultKeyStore() {

@@ -161,14 +161,20 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
 
         // now display the new keystore
         addKeyStore(newKeyStore);
+
+        // now select it
+        table.setRowSelectionInterval(model.getRowCount() - 1, model.getRowCount() - 1);
+
+        // now edit it...
+        editSelectedKeyStore(null);
     }
 
     private KeyStore getNewKeyStore() {
         return new KeyStore(
             true,
-            "JDK 8.1",
-            "C:/Users/pc/Desktop/cacerts",
-            "changeit"
+            "New Keystore",
+            "",
+            ""
         );
     }
 

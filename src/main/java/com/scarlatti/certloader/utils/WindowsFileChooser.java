@@ -13,6 +13,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
@@ -88,6 +89,7 @@ public class WindowsFileChooser
 	protected boolean validateFileExists;
 
 	protected Window parent;
+	protected Container parentComponent;
 
 	/**
 	 * creates a new file chooser
@@ -173,7 +175,7 @@ public class WindowsFileChooser
 		return showDialog(parent, false);
 	}
 
-	/*
+	/**
 	 * shows the dialog
 	 *
 	 * @param parent the parent window
@@ -195,7 +197,8 @@ public class WindowsFileChooser
 			// enable resizing of the dialog
 			| Comdlg32.OFN_ENABLESIZING;
 
-		if (parent != null) params.hwndOwner = Native.getWindowPointer(parent);
+		if (parent != null)
+			params.hwndOwner = Native.getWindowPointer(parent);
 
 		// lpstrFile contains the selection path after the dialog
 		// returns. It must be big enough for the path to fit or
@@ -332,7 +335,11 @@ public class WindowsFileChooser
 	}
 
 	public WindowsFileChooser withInitialFile(String initialFile) {
-		this.initialFile = initialFile.replace("/", "\\");
+
+		if (Files.exists(Paths.get(initialFile))) {
+			this.initialFile = initialFile.replace("/", "\\");
+		}
+
 		return this;
 	}
 
@@ -341,11 +348,14 @@ public class WindowsFileChooser
 	}
 
 	public WindowsFileChooser withInitialDirectory(String initialDirectory) {
-		this.initialDirectory = initialDirectory.replace("/", "\\");
+		if (initialDirectory != null && Files.exists(Paths.get(initialDirectory))) {
+			this.initialDirectory = initialDirectory.replace("/", "\\");
 
-		this.initialDirectory = this.initialDirectory.endsWith("\\") ?
-			this.initialDirectory :
-			this.initialDirectory + "\\";
+			this.initialDirectory = this.initialDirectory.endsWith("\\") ?
+				this.initialDirectory :
+				this.initialDirectory + "\\";
+
+		}
 
 		return this;
 	}
@@ -364,6 +374,12 @@ public class WindowsFileChooser
 		return this;
 	}
 
+	public WindowsFileChooser withParent(Container component) {
+		this.parent = SwingUtilities.getWindowAncestor(component);
+		this.parentComponent = component;
+		return this;
+	}
+
 	public WindowsFileChooser existingFilesOnly() {
 		this.validateFileExists = true;
 		return this;
@@ -374,6 +390,9 @@ public class WindowsFileChooser
 	 * @throws NoSuchFileException if invalid file selected
 	 */
 	public File prompt() throws NoSuchFileException {
+
+		enableComponents(parentComponent, false);
+
 		File file = showOpenDialog() ? getSelectedFile() : null;
 		if (file != null && validateFileExists) {
 			if (!Files.exists(Paths.get(file.getAbsolutePath()))) {
@@ -381,10 +400,19 @@ public class WindowsFileChooser
 			}
 		}
 
+		enableComponents(parentComponent, true);
+
 		return file;
 	}
 
-	public interface FileChosenCallback {
-		void callback(File file);
+	private void enableComponents(Container parent, boolean enable) {
+		if (parent != null) {
+			for (Component child : parent.getComponents()) {
+				child.setEnabled(enable);
+				if (child instanceof Container) {
+					enableComponents((Container) child, enable);
+				}
+			}
+		}
 	}
 }
