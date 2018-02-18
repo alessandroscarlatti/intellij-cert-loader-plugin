@@ -269,7 +269,7 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
             // confirm intention!
             boolean confirmed = ConfirmationService.getYesOrNo(
                 ConfirmationService.defaultDialog()
-                    .parent(jPanel)
+                    .parent(jPanel.getRootPane())
                     .title("Confirm Delete Keystore(s)...")
                     .message("Are you sure you want to remove the selected keystore(s)?")
                     .yesOption("Yes, Delete")
