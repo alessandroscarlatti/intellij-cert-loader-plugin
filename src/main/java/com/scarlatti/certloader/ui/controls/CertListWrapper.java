@@ -1,10 +1,13 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.Cert;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,10 +23,14 @@ public class CertListWrapper implements UIComponent {
 
     public CertListWrapper() {
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
+        hidden();
     }
 
     public void hidden() {
         jPanel.removeAll();
+        jPanel.add(new CertList("", Collections.emptyList(), certs -> {
+        }).getJPanel());
+//        jPanel.setPreferredSize(new Dimension(500, 300));
         jPanel.revalidate();
     }
 
@@ -34,8 +41,10 @@ public class CertListWrapper implements UIComponent {
     public void loading(Runnable onTimeout) {
         jPanel.removeAll();
         progressBar = new CertListLoadingProgress();
-        jPanel.add(progressBar.getJPanel());
+        jPanel.add(progressBar.getJPanel(), new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, /*GridConstraints.SIZEPOLICY_CAN_SHRINK |*/ GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         jPanel.revalidate();
+        jPanel.getParent().revalidate();
+        SwingUtilities.getWindowAncestor(jPanel).pack();
 
         progressBar.load(1000, onTimeout);
     }
@@ -49,15 +58,20 @@ public class CertListWrapper implements UIComponent {
      */
     public void listCerts(String url, List<Cert> certs, CertList.InstallCallback installCallback) {
         jPanel.removeAll();
-        jPanel.add(new CertList(url, certs, installCallback).getJPanel());
-        jPanel.setPreferredSize(new Dimension(jPanel.getParent().getWidth(), 300));
+        jPanel.add(new CertList(url, certs, installCallback).getJPanel(), new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+//        jPanel.setMinimumSize(new Dimension(-1, -1));
+        jPanel.setPreferredSize(new Dimension(jPanel.getParent().getWidth(), 150));
         jPanel.revalidate();
+        jPanel.getParent().revalidate();
+        SwingUtilities.getWindowAncestor(jPanel).pack();
     }
 
     public void error(String url, Exception e) {
         jPanel.removeAll();
-        jPanel.add(new CertLoadingError("Error Connecting to <" + url + ">", e).getJPanel());
+        jPanel.add(new CertLoadingError("Error Connecting to <" + url + ">", e).getJPanel(), new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         jPanel.revalidate();
+        jPanel.getParent().revalidate();
+        SwingUtilities.getWindowAncestor(jPanel).pack();
     }
 
     @Override

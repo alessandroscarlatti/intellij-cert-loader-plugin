@@ -1,8 +1,11 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * ______    __                         __           ____             __     __  __  _

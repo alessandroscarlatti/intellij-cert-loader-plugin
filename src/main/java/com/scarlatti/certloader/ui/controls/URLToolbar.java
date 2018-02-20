@@ -89,6 +89,7 @@ public class URLToolbar implements UIComponent {
 
     public static abstract class AbstractLoadAction {
         public abstract void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback);
+
         public abstract void cancel(ActionCompletedCallback callback);
 
         @FunctionalInterface

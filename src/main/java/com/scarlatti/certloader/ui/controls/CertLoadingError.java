@@ -1,5 +1,7 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
@@ -48,7 +50,7 @@ public class CertLoadingError implements UIComponent {
         e.printStackTrace(new PrintWriter(errors));
         sb.append(errors.toString());
         JTextArea jta = new JTextArea(sb.toString());
-        return new JScrollPane(jta){
+        return new JScrollPane(jta) {
             @Override
             public Dimension getPreferredSize() {
                 return new Dimension(480, 320);
