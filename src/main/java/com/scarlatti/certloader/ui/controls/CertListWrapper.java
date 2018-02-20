@@ -1,7 +1,6 @@
 package com.scarlatti.certloader.ui.controls;
 
 import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.Cert;
 
@@ -20,11 +19,14 @@ import java.util.List;
 public class CertListWrapper implements UIComponent {
     private JPanel jPanel;
     private CertListLoadingProgress progressBar;
+    private CertLoadingError errorMessage;
+    private CertList certList;
+    private WelcomeMessage welcomeMessage;
 
-    public CertListWrapper() {
-        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
-        hidden();
-    }
+//    public CertListWrapper() {
+//        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
+//        hidden();
+//    }
 
     public void hidden() {
         jPanel.removeAll();
