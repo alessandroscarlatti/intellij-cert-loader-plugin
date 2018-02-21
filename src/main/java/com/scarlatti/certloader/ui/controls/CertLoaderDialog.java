@@ -16,12 +16,13 @@ import java.awt.*;
  */
 public class CertLoaderDialog implements UIComponent {
 
-    private JPanel asdf;
+    private JPanel jPanel;
     private URLToolbar urlToolbar;
     private CertListWrapper certListWrapper;
+    private AppManager appManager;
 
     public CertLoaderDialog() {
-        asdf.setPreferredSize(new Dimension(640, 580));
+        jPanel.setPreferredSize(new Dimension(640, 580));
     }
 
     public URLToolbar getUrlToolbar() {
@@ -34,7 +35,7 @@ public class CertLoaderDialog implements UIComponent {
 
     @Override
     public JPanel getJPanel() {
-        return asdf;
+        return jPanel;
     }
 
     /**
@@ -71,22 +72,28 @@ public class CertLoaderDialog implements UIComponent {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        asdf = new JPanel();
-        asdf.setLayout(new GridLayoutManager(3, 1, new Insets(10, 10, 10, 10), -1, -1));
-        asdf.setAlignmentY(0.0f);
-        asdf.setPreferredSize(new Dimension(700, 700));
-        final AppManager nestedForm1 = new AppManager();
-        asdf.add(nestedForm1.$$$getRootComponent$$$(), new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, new Dimension(-1, 300), 0, false));
+        jPanel = new JPanel();
+        jPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
+        jPanel.setAlignmentY(0.0f);
+        jPanel.setPreferredSize(new Dimension(700, 700));
+        appManager = new AppManager();
+        jPanel.add(appManager.$$$getRootComponent$$$(), new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, new Dimension(-1, 300), 0, false));
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
+        jPanel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         urlToolbar = new URLToolbar();
-        asdf.add(urlToolbar.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, new Dimension(-1, 49), null, 0, false));
+        panel1.add(urlToolbar.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, new Dimension(-1, 49), null, 0, false));
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
+        jPanel.add(panel2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         certListWrapper = new CertListWrapper();
-        asdf.add(certListWrapper.$$$getRootComponent$$$(), new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 196), null, 0, false));
+        panel2.add(certListWrapper.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 196), null, 0, false));
     }
 
     /**
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
-        return asdf;
+        return jPanel;
     }
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.scarlatti.certloader.ui.controls.CertLoaderDialog">
-  <grid id="27dc6" binding="asdf" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="10" left="10" bottom="10" right="10"/>
+  <grid id="27dc6" binding="jPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="740" height="257"/>
+      <xy x="20" y="20" width="740" height="305"/>
     </constraints>
     <properties>
       <alignmentY value="0.0"/>
@@ -11,27 +11,47 @@
     </properties>
     <border type="none"/>
     <children>
-      <nested-form id="7a299" form-file="com/scarlatti/certloader/ui/controls/AppManager.form">
+      <nested-form id="7a299" form-file="com/scarlatti/certloader/ui/controls/AppManager.form" binding="appManager">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="2" fill="1" indent="0" use-parent-layout="false">
             <maximum-size width="-1" height="300"/>
           </grid>
         </constraints>
       </nested-form>
-      <nested-form id="93897" form-file="com/scarlatti/certloader/ui/controls/URLToolbar.form" binding="urlToolbar">
+      <grid id="26354" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="10" left="10" bottom="10" right="10"/>
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="-1" height="49"/>
-          </grid>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
-      </nested-form>
-      <nested-form id="ae4ab" form-file="com/scarlatti/certloader/ui/controls/CertListWrapper.form" binding="certListWrapper">
+        <properties/>
+        <border type="none"/>
+        <children>
+          <nested-form id="93897" form-file="com/scarlatti/certloader/ui/controls/URLToolbar.form" binding="urlToolbar">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="-1" height="49"/>
+              </grid>
+            </constraints>
+          </nested-form>
+        </children>
+      </grid>
+      <grid id="d7c80" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="10" left="10" bottom="10" right="10"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="-1" height="196"/>
-          </grid>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-      </nested-form>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <nested-form id="ae4ab" form-file="com/scarlatti/certloader/ui/controls/CertListWrapper.form" binding="certListWrapper">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="-1" height="196"/>
+              </grid>
+            </constraints>
+          </nested-form>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>

@@ -7,7 +7,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE.
  */
-package com.scarlatti.certloader.utils;
+package com.scarlatti.certloader.ui.controls.filechooser;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;

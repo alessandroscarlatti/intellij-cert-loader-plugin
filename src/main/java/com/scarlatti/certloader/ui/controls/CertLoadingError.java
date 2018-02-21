@@ -25,16 +25,18 @@ public class CertLoadingError implements UIComponent {
     private JLabel detailsLink;
 
     private JComponent jsp;  // this is the exception content
+    private String errorTitle;
 
     public CertLoadingError() {
+        addListeners();
     }
 
-    public CertLoadingError(String title, Exception e) {
+    public void init(String title, Exception e) {
         jsp = buildExceptionViewer(e);
-        addListeners(title);
+        errorTitle = title;
     }
 
-    private void addListeners(String errorTitle) {
+    private void addListeners() {
         detailsLink.setCursor(new Cursor(HAND_CURSOR));
         detailsLink.addMouseListener(new MouseAdapter() {
             @Override

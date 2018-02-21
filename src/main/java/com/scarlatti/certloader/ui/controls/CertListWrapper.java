@@ -1,5 +1,7 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.Cert;
 
@@ -38,7 +40,7 @@ public class CertListWrapper implements UIComponent {
     public void loading(Runnable onTimeout) {
         layout.show(jPanel, "progressBar");
 
-        progressBar.load(1000, onTimeout);
+        progressBar.load(10000, onTimeout);
     }
 
     public void stopLoading() {
@@ -54,9 +56,8 @@ public class CertListWrapper implements UIComponent {
     }
 
     public void error(String url, Exception e) {
-
-        // "Error Connecting to <" + url + ">"
         layout.show(jPanel, "errorMessage");
+        errorMessage.init("Error Connecting to <" + url + ">", e);
     }
 
     @Override
@@ -104,14 +105,17 @@ public class CertListWrapper implements UIComponent {
         jPanel.setOpaque(false);
         jPanel.setPreferredSize(new Dimension(-1, -1));
         jPanel.setRequestFocusEnabled(false);
-        progressBar = new CertListLoadingProgress();
-        jPanel.add(progressBar.$$$getRootComponent$$$(), "progressBar");
         errorMessage = new CertLoadingError();
         jPanel.add(errorMessage.$$$getRootComponent$$$(), "errorMessage");
         certList = new CertList();
         jPanel.add(certList.$$$getRootComponent$$$(), "certList");
         welcomeMessage = new WelcomeMessage();
         jPanel.add(welcomeMessage.$$$getRootComponent$$$(), "welcomeMessage");
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        jPanel.add(panel1, "progressBar");
+        progressBar = new CertListLoadingProgress();
+        panel1.add(progressBar.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
     /**

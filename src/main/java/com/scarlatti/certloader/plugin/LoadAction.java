@@ -8,6 +8,7 @@ import com.scarlatti.certloader.ui.model.Cert;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -20,55 +21,93 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
 
     private Thread loadingThread;
     private CertListWrapper certListWrapper;
+    private CountDownLatch latch;
+    private ActionCompletedCallback successCallback;
+    private ActionCompletedCallback errorCallback;
+    private String url;
+    private List<X509Certificate> rawCerts;
+    private List<Cert> certs;
+    private Exception exception;
 
     public LoadAction(CertListWrapper certListWrapper) {
         this.certListWrapper = certListWrapper;
     }
 
+    public void reset() {
+        loadingThread = null;
+        latch = null;
+        successCallback = null;
+        errorCallback = null;
+        url = null;
+        rawCerts = null;
+        certs = null;
+        exception = null;
+    }
+
     @Override
-    public void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
+    public void load(String url, ActionCompletedCallback successCallback, ActionCompletedCallback errorCallback) {
         // do loading here...
-        loadingThread = new Thread(() -> {
-            try {
-                certListWrapper.loading(() -> {
-                    throw new ProcessAbortedException("Connection attempt timed out.");
-                });
+        reset();
+        this.successCallback = successCallback;
+        this.errorCallback = errorCallback;
+        this.url = url;
+        latch = new CountDownLatch(1);
+        loadingThread = new Thread(this::download, "LoadAction");
+        loadingThread.start();
 
-                List<X509Certificate> rawCerts = CertDownloader.downloadCerts(url);
-                List<Cert> certs = buildViewModelCerts(rawCerts);
+        // now wait for the countdown latch...
+        // we should proceed when:
+        // 1) the downloader has finished and there are results in the expected location...
+        // 2) OR the progress bar has timed out and there are no results...
+        // 3) OR the connection had an error and there are no results...
+        // 4) OR the user canceled the download and there are no results...
 
-//                try {
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                    certListWrapper.stopLoading();
-//                    callback.callback();
-//                    return;
-//                }
+        try {
+            latch.await();
 
+            // now determine which case we are in :)
+            if (exception == null && certs != null) {
+                // now we know we have some certs!
                 certListWrapper.stopLoading();
                 certListWrapper.listCerts(url, certs, CertList.noOpInstallCallback());
-                callback.callback();
-            } catch (ProcessAbortedException e) {
-                e.printStackTrace();  // TODO when this is caught, we should fire off the cancel action
+                this.successCallback.callback();
+            } else if (exception != null) {
+                exception.printStackTrace();  // TODO when this is caught, we should fire off the cancel action
                 certListWrapper.stopLoading();
                 errorCallback.callback();
-                certListWrapper.welcome();
-            } catch (SSLConnectionException e) {
-                e.printStackTrace();
-                certListWrapper.stopLoading();
-                errorCallback.callback();
-                certListWrapper.error(url, e);
+                certListWrapper.error(url, exception);
+            } else {
+                System.err.println("Error downloading certificate(s).  Please try again!");
             }
-        }, "LoadAction");
 
-        loadingThread.start();
+
+
+        } catch (InterruptedException e) {
+            System.err.println("Unknown interruption while downloading certificate(s).");
+            e.printStackTrace();
+        }
+    }
+
+    public void download() {
+        try {
+            certListWrapper.loading(() -> {
+                exception = new ProcessAbortedException("Connection attempt timed out.");
+                latch.countDown();
+            });
+
+            rawCerts = CertDownloader.downloadCerts(url);
+            certs = buildViewModelCerts(rawCerts);
+            latch.countDown();
+        } catch (Exception e) {
+            exception = e;
+            latch.countDown();
+        }
     }
 
     @Override
     public void cancel(ActionCompletedCallback callback) {
         // cancel loading here...
-        loadingThread.interrupt();
+        latch.countDown();
         certListWrapper.welcome();
         callback.callback();
     }

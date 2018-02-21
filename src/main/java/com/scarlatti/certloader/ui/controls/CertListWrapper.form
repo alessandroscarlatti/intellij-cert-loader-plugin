@@ -12,11 +12,6 @@
     </properties>
     <border type="none"/>
     <children>
-      <nested-form id="44b43" form-file="com/scarlatti/certloader/ui/controls/CertListLoadingProgress.form" binding="progressBar">
-        <constraints>
-          <card name="progressBar"/>
-        </constraints>
-      </nested-form>
       <nested-form id="7c2b4" form-file="com/scarlatti/certloader/ui/controls/CertLoadingError.form" binding="errorMessage">
         <constraints>
           <card name="errorMessage"/>
@@ -32,6 +27,21 @@
           <card name="welcomeMessage"/>
         </constraints>
       </nested-form>
+      <grid id="7eaad" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <card name="progressBar"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <nested-form id="44b43" form-file="com/scarlatti/certloader/ui/controls/CertListLoadingProgress.form" binding="progressBar">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </nested-form>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>
