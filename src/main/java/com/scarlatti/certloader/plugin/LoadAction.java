@@ -53,7 +53,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
                 e.printStackTrace();  // TODO when this is caught, we should fire off the cancel action
                 certListWrapper.stopLoading();
                 errorCallback.callback();
-                certListWrapper.hidden();
+                certListWrapper.welcome();
             } catch (SSLConnectionException e) {
                 e.printStackTrace();
                 certListWrapper.stopLoading();
@@ -69,7 +69,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
     public void cancel(ActionCompletedCallback callback) {
         // cancel loading here...
         loadingThread.interrupt();
-        certListWrapper.hidden();
+        certListWrapper.welcome();
         callback.callback();
     }
 

@@ -7,7 +7,6 @@ import com.scarlatti.certloader.ui.controls.URLToolbar;
 import com.scarlatti.certloader.ui.model.Cert;
 import org.junit.Test;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +62,7 @@ public class CertLoaderDialogTest {
                 public void cancel(ActionCompletedCallback callback) {
                     // cancel loading here...
                     loadingThread.interrupt();
-                    certLoaderDialog.getCertListWrapper().hidden();
+                    certLoaderDialog.getCertListWrapper().welcome();
                     callback.callback();
                 }
             });
@@ -82,19 +81,16 @@ public class CertLoaderDialogTest {
             );
 
             return certLoaderDialog.getJPanel();
-        }/*, jPanel -> {
-            revalidateContainer(jPanel);
-            SwingUtilities.getWindowAncestor(jPanel).pack();
-        }*/);
+        });
     }
 
-    public void revalidateContainer(Container container) {
-        for (Component c : container.getComponents()) {
-            if (c instanceof Container) {
-                revalidateContainer((Container) c);
-            }
-        }
-
-        container.revalidate();
-    }
+//    public void revalidateContainer(Container container) {
+//        for (Component c : container.getComponents()) {
+//            if (c instanceof Container) {
+//                revalidateContainer((Container) c);
+//            }
+//        }
+//
+//        container.revalidate();
+//    }
 }

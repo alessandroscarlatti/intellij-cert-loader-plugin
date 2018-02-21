@@ -14,22 +14,22 @@
     <children>
       <nested-form id="44b43" form-file="com/scarlatti/certloader/ui/controls/CertListLoadingProgress.form" binding="progressBar">
         <constraints>
-          <card name="Card1"/>
+          <card name="progressBar"/>
         </constraints>
       </nested-form>
       <nested-form id="7c2b4" form-file="com/scarlatti/certloader/ui/controls/CertLoadingError.form" binding="errorMessage">
         <constraints>
-          <card name="Card2"/>
+          <card name="errorMessage"/>
         </constraints>
       </nested-form>
       <nested-form id="14245" form-file="com/scarlatti/certloader/ui/controls/CertList.form" binding="certList">
         <constraints>
-          <card name="Card3"/>
+          <card name="certList"/>
         </constraints>
       </nested-form>
       <nested-form id="735a5" form-file="com/scarlatti/certloader/ui/controls/WelcomeMessage.form" binding="welcomeMessage">
         <constraints>
-          <card name="Card4"/>
+          <card name="welcomeMessage"/>
         </constraints>
       </nested-form>
     </children>
