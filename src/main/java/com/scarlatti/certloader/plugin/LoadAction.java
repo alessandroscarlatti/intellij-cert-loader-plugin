@@ -69,7 +69,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
             if (exception == null && certs != null) {
                 // now we know we have some certs!
                 certListWrapper.stopLoading();
-                certListWrapper.listCerts(url, certs, CertList.noOpInstallCallback());
+                certListWrapper.listCerts(url, certs);
                 this.successCallback.callback();
             } else if (exception != null) {
                 exception.printStackTrace();  // TODO when this is caught, we should fire off the cancel action
@@ -117,7 +117,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
      * @param rawCerts
      * @return
      */
-    public static List<Cert> buildViewModelCerts(List<X509Certificate> rawCerts) {
+    public List<Cert> buildViewModelCerts(List<X509Certificate> rawCerts) {
         List<Cert> certs = new ArrayList<>();
 
         int i = 0;
@@ -126,7 +126,9 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
                 i,
                 true,
                 cert.getIssuerDN().getName(),
-                cert.getIssuerDN().getName()
+                cert.getIssuerDN().getName(),
+                cert,
+                url
             ));
             i++;
         }

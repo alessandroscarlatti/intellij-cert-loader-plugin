@@ -1,5 +1,7 @@
 package com.scarlatti.certloader.ui.model;
 
+import java.security.cert.X509Certificate;
+
 /**
  * ______    __                         __           ____             __     __  __  _
  * ___/ _ | / /__ ___ ___ ___ ____  ___/ /______    / __/______ _____/ /__ _/ /_/ /_(_)
@@ -12,6 +14,8 @@ public class Cert {
     private boolean selected;
     private String companyName;
     private String locationName;
+    private X509Certificate rawCert;
+    private String url;
 
     public Cert() {
     }
@@ -21,6 +25,15 @@ public class Cert {
         this.selected = selected;
         this.companyName = companyName;
         this.locationName = locationName;
+    }
+
+    public Cert(int key, boolean selected, String companyName, String locationName, X509Certificate rawCert, String url) {
+        this.key = key;
+        this.selected = selected;
+        this.companyName = companyName;
+        this.locationName = locationName;
+        this.rawCert = rawCert;
+        this.url = url;
     }
 
     @Override
@@ -63,5 +76,21 @@ public class Cert {
 
     public void setLocationName(String locationName) {
         this.locationName = locationName;
+    }
+
+    public X509Certificate getRawCert() {
+        return rawCert;
+    }
+
+    public void setRawCert(X509Certificate rawCert) {
+        this.rawCert = rawCert;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

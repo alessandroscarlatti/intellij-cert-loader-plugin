@@ -1,5 +1,6 @@
 package com.scarlatti.certloader.ui;
 
+import com.scarlatti.certloader.plugin.InstallAction;
 import com.scarlatti.certloader.plugin.LoadAction;
 import com.scarlatti.certloader.ui.controls.CertList;
 import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
@@ -79,6 +80,10 @@ public class CertLoaderDialogTest {
             certLoaderDialog.getUrlToolbar().setLoadAction(
                 new LoadAction(certLoaderDialog.getCertListWrapper())
             );
+
+            certLoaderDialog.getCertListWrapper().getCertList().setInstallCallback(certs -> {
+                new InstallAction(certLoaderDialog.getJPanel()).install(certs, certLoaderDialog.getAppManager().getListKeyStores().getCheckedKeyStores());
+            });
 
             return certLoaderDialog.getJPanel();
         });
