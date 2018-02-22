@@ -1,7 +1,5 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
@@ -156,5 +154,9 @@ public class URLToolbar implements UIComponent {
 
     public void setLoadAction(AbstractLoadAction loadAction) {
         this.loadAction = loadAction;
+    }
+
+    public void setUrl(String url) {
+        this.url.setText(url);
     }
 }

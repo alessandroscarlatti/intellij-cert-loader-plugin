@@ -73,6 +73,14 @@ public class CertList implements UIComponent {
 
     private void setupTitle(String url) {
         this.url = url;
+
+        // parse the text for the url
+        // needs to start with https://
+
+        if (!url.startsWith("https://")) {
+            url = "https://" + url;
+        }
+
         urlLink.setText("<html><u>" + url + "</u></html>");
     }
 
@@ -232,6 +240,10 @@ public class CertList implements UIComponent {
 
     public JTable getTable() {
         return table;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     @FunctionalInterface

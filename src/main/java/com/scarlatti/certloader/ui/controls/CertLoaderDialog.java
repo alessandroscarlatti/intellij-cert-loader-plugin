@@ -1,11 +1,13 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.scarlatti.certloader.plugin.AppState;
+import com.scarlatti.certloader.services.Repository;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -20,9 +22,51 @@ public class CertLoaderDialog implements UIComponent {
     private URLToolbar urlToolbar;
     private CertListWrapper certListWrapper;
     private AppManager appManager;
+    private Repository<AppState> repository;
+    private AppState appState;
 
     public CertLoaderDialog() {
         jPanel.setPreferredSize(new Dimension(640, 580));
+        appState = AppState.defaultState();
+        loadState();
+    }
+
+    public CertLoaderDialog(Repository<AppState> repository) {
+        jPanel.setPreferredSize(new Dimension(640, 580));
+        this.repository = repository;
+
+        appState = repository.retrieve();
+
+        loadState();
+
+        // setup app closing hooks
+        setupHooks();
+    }
+
+    private void loadState() {
+        if (appState != null) {
+            if (appState.getKeyStores() != null) {
+                appManager.getListKeyStores().setCurrent(appState.getKeyStores());
+            }
+
+            if (appState.getMostRecentUrl() != null) {
+                urlToolbar.setUrl(appState.getMostRecentUrl());
+            }
+        }
+    }
+
+    public void saveOnClose() {
+        if (repository != null) {
+
+            appState.setKeyStores(appManager.getListKeyStores().getCurrent());
+            appState.setMostRecentUrl(certListWrapper.getCertList().getUrl());
+
+            repository.save(appState);
+        }
+    }
+
+    private void setupHooks() {
+//        SwingUtilities.getWindowAncestor(jPanel);
     }
 
     public URLToolbar getUrlToolbar() {

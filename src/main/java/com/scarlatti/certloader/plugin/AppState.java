@@ -1,5 +1,12 @@
 package com.scarlatti.certloader.plugin;
 
+import com.intellij.ui.DefaultIconDeferrer;
+import com.scarlatti.certloader.ui.controls.ListKeyStores;
+import com.scarlatti.certloader.ui.model.KeyStore;
+
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * ______    __                         __           ____             __     __  __  _
  * ___/ _ | / /__ ___ ___ ___ ____  ___/ /______    / __/______ _____/ /__ _/ /_/ /_(_)
@@ -9,43 +16,54 @@ package com.scarlatti.certloader.plugin;
  */
 public class AppState {
     private String mostRecentUrl;
-    private JVM mostRecentJVM;
+    private List<KeyStore> keyStores;
 
     public static AppState defaultState() {
         AppState appState = new AppState();
-        appState.mostRecentUrl = "www.google.com";
-        appState.mostRecentJVM = new JVM("silly jvm", "C:/somewhere");
+        appState.mostRecentUrl = Defaults.mostRecentUrl();
+        appState.keyStores = Defaults.keyStores();
 
         return appState;
     }
 
-    public static class JVM {
-        private String name;
-        private String path;
+    private static class Defaults {
 
-        public JVM() {
+        public static String mostRecentUrl() {
+            return "www.google.com";
         }
 
-        public JVM(String name, String path) {
-            this.name = name;
-            this.path = path;
+        public static List<KeyStore> keyStores() {
+            return Arrays.asList(Defaults.KeyStores.sample1(), Defaults.KeyStores.sample2());
         }
 
-        public String getName() {
-            return name;
-        }
+        public static class KeyStores {
 
-        public void setName(String name) {
-            this.name = name;
-        }
+            public static KeyStore sample1() {
+                return new KeyStore(
+                    true,
+                    "JDK 8.1",
+                    "C:/Users/pc/Desktop/cacerts",
+                    "changeit"
+                );
+            }
 
-        public String getPath() {
-            return path;
+            public static KeyStore sample2() {
+                return new KeyStore(
+                    true,
+                    "JDK 7.2",
+                    "C:/Users/pc/Desktop/cacerts",
+                    "changeit"
+                );
+            }
         }
+    }
 
-        public void setPath(String path) {
-            this.path = path;
-        }
+    @Override
+    public String toString() {
+        return "AppState{" +
+            "mostRecentUrl='" + mostRecentUrl + '\'' +
+            ", keyStores=" + keyStores +
+            '}';
     }
 
     public String getMostRecentUrl() {
@@ -56,11 +74,11 @@ public class AppState {
         this.mostRecentUrl = mostRecentUrl;
     }
 
-    public JVM getMostRecentJVM() {
-        return mostRecentJVM;
+    public List<KeyStore> getKeyStores() {
+        return keyStores;
     }
 
-    public void setMostRecentJVM(JVM mostRecentJVM) {
-        this.mostRecentJVM = mostRecentJVM;
+    public void setKeyStores(List<KeyStore> keyStores) {
+        this.keyStores = keyStores;
     }
 }

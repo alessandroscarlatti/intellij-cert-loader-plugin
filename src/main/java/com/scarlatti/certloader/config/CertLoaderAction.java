@@ -5,13 +5,13 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.scarlatti.certloader.plugin.AppState;
 import com.scarlatti.certloader.plugin.InstallAction;
 import com.scarlatti.certloader.plugin.LoadAction;
-import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
-import com.scarlatti.certloader.ui.controls.CertLoaderDialogOld;
 import com.scarlatti.certloader.plugin.PluginStateWrapper;
-
-import javax.swing.*;
+import com.scarlatti.certloader.services.IntelliJRepository;
+import com.scarlatti.certloader.services.Repository;
+import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
 
 /**
  * ~     _____                                    __
@@ -41,7 +41,9 @@ public class CertLoaderAction extends AnAction {
 
     private void showDialog() {
 
-        CertLoaderDialog certLoaderDialog = new CertLoaderDialog();
+        Repository<AppState> repository = new IntelliJRepository<>(ServiceManager.getService(PluginStateWrapper.class));
+
+        CertLoaderDialog certLoaderDialog = new CertLoaderDialog(repository);
 
         certLoaderDialog.getUrlToolbar().setLoadAction(
             new LoadAction(certLoaderDialog.getCertListWrapper())
@@ -61,6 +63,8 @@ public class CertLoaderAction extends AnAction {
 //        builder.addCancelAction();
 
         builder.show();
+
+        certLoaderDialog.saveOnClose();
     }
 
     private void performActionWithPersistentStateImplementation() {

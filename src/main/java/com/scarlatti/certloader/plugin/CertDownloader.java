@@ -76,10 +76,31 @@ public class CertDownloader {
         return Arrays.asList(certs);
     }
 
+    /**
+     * Must set the host such as www.google.com, not https://www.google.com
+     * Must choose the given port, or 443
+     *
+     * @param url given a string url
+     * @param props must set props correctly
+     */
     protected void processURL(String url, Props props) {
-        String[] hostPort = url.split(":");
-        String host = hostPort[0];
-        int port = (hostPort.length == 1) ? 443 : Integer.parseInt(hostPort[1]);
+
+        //first trim off any http:// or https://
+        if (url.startsWith("http://")) url = url.replaceFirst("http://", "");
+        if (url.startsWith("https://")) url = url.replaceFirst("https://", "");
+
+        String[] urlPieces = url.split(":");
+
+        String host = url;
+        int port = 443;
+
+        if (urlPieces.length == 1) {
+            // no port provided
+        } else {
+            // port provided
+            host = urlPieces[0];
+            port = Integer.parseInt(urlPieces[1]);
+        }
 
         props.setHost(host);
         props.setPort(port);
