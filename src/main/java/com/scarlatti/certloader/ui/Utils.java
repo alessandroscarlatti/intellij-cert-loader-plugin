@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -58,6 +60,22 @@ public class Utils {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
+    }
+
+    public static JComponent buildExceptionViewer(Exception e) {
+        StringBuilder sb = new StringBuilder("");
+        sb.append(e.getMessage());
+        sb.append("\n");
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        sb.append(errors.toString());
+        JTextArea jta = new JTextArea(sb.toString());
+        return new JScrollPane(jta) {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(480, 320);
+            }
+        };
     }
 
     @FunctionalInterface

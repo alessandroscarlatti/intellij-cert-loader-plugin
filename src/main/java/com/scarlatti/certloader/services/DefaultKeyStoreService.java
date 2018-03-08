@@ -54,7 +54,7 @@ public class DefaultKeyStoreService {
                 keyStorePaths.add(path.toString());
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error getting default key stores.", e);
         }
 
         return buildKeyStores(keyStorePaths);

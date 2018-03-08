@@ -6,6 +6,7 @@ import com.scarlatti.certloader.services.DefaultKeyStoreService;
 import com.scarlatti.certloader.services.LoadCertService;
 import com.scarlatti.certloader.services.Repository;
 import com.scarlatti.certloader.ui.UIComponent;
+import com.scarlatti.certloader.ui.Utils;
 import com.scarlatti.certloader.ui.model.KeyStore;
 
 import javax.swing.*;
@@ -74,8 +75,13 @@ public class CertLoaderDialog implements UIComponent {
     private List<KeyStore> getInitialKeyStores() {
         List<KeyStore> keyStores = appState.getKeyStores();
 
-        if (keyStores.size() == 0) {
-            keyStores = DefaultKeyStoreService.getDefaultKeyStores();
+        try {
+            if (keyStores.size() == 0) {
+                keyStores = DefaultKeyStoreService.getDefaultKeyStores();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    SwingUtilities.getWindowAncestor(jPanel), Utils.buildExceptionViewer(e), "Error Getting Default Key Stores", JOptionPane.ERROR_MESSAGE);
         }
 
         return keyStores;

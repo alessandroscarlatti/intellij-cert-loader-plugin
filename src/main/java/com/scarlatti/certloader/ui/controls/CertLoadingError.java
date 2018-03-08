@@ -1,15 +1,12 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
+import com.scarlatti.certloader.ui.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import static java.awt.Cursor.HAND_CURSOR;
 
@@ -24,7 +21,7 @@ public class CertLoadingError implements UIComponent {
     private JPanel jPanel;
     private JLabel detailsLink;
 
-    private JComponent jsp;  // this is the exception content
+    private JComponent exceptionViewer;  // this is the exception content
     private String errorTitle;
 
     public CertLoadingError() {
@@ -32,7 +29,7 @@ public class CertLoadingError implements UIComponent {
     }
 
     public void init(String title, Exception e) {
-        jsp = buildExceptionViewer(e);
+        exceptionViewer = Utils.buildExceptionViewer(e);
         errorTitle = title;
     }
 
@@ -42,25 +39,9 @@ public class CertLoadingError implements UIComponent {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JOptionPane.showMessageDialog(
-                    null, jsp, errorTitle, JOptionPane.ERROR_MESSAGE);
+                    SwingUtilities.getWindowAncestor(jPanel), exceptionViewer, errorTitle, JOptionPane.ERROR_MESSAGE);
             }
         });
-    }
-
-    private JComponent buildExceptionViewer(Exception e) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append(e.getMessage());
-        sb.append("\n");
-        StringWriter errors = new StringWriter();
-        e.printStackTrace(new PrintWriter(errors));
-        sb.append(errors.toString());
-        JTextArea jta = new JTextArea(sb.toString());
-        return new JScrollPane(jta) {
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(480, 320);
-            }
-        };
     }
 
     @Override
