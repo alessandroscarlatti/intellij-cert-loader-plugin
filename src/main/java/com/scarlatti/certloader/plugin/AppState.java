@@ -1,10 +1,8 @@
 package com.scarlatti.certloader.plugin;
 
-import com.intellij.ui.DefaultIconDeferrer;
-import com.scarlatti.certloader.ui.controls.ListKeyStores;
 import com.scarlatti.certloader.ui.model.KeyStore;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,7 +31,7 @@ public class AppState {
         }
 
         public static List<KeyStore> keyStores() {
-            return Arrays.asList(Defaults.KeyStores.sample1(), Defaults.KeyStores.sample2());
+            return Collections.emptyList();
         }
 
         public static class KeyStores {

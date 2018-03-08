@@ -120,8 +120,6 @@ public class InstallCertService {
                     System.out.println(cert);
                     System.out.println();
                     System.out.println("Added certificate to keystore " + keyStore.getPath() + " using alias '" + alias + "'");
-
-                    JOptionPane.showMessageDialog(null, "Installed " + certs.size() + " certificate(s).", "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         } catch (Exception e) {

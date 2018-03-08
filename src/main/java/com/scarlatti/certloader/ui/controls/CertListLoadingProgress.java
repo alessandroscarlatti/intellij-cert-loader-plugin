@@ -1,11 +1,10 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -19,7 +18,7 @@ public class CertListLoadingProgress implements UIComponent {
     private JPanel jPanel;
 
     private Thread progressBarThread;
-    private ThreadLocal<Boolean> timedOut;
+    private AtomicReference<Boolean> running = new AtomicReference<>(false);
 
     @Override
     public JPanel getJPanel() {
@@ -31,9 +30,15 @@ public class CertListLoadingProgress implements UIComponent {
 
         // need a variable for this thread so that we can interrupt it later!
         progressBarThread = new Thread(() -> {
+
+            running.set(true);
+
             final int REFRESH_RATE_MS = 15;
 
             for (int i = 0; i * REFRESH_RATE_MS < timeoutMs; i++) {
+
+                if (!running.get()) return;
+
                 try {
                     progressBar.setValue(i * (timeoutMs / (timeoutMs / REFRESH_RATE_MS)));
                     Thread.sleep(REFRESH_RATE_MS);
@@ -50,7 +55,7 @@ public class CertListLoadingProgress implements UIComponent {
     }
 
     public void stop() {
-        progressBarThread.interrupt();
+        running.set(false);
     }
 
     /**

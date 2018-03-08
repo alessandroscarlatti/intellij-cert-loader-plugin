@@ -1,15 +1,11 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
+import com.scarlatti.certloader.services.DefaultKeyStoreService;
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.KeyStore;
 import com.scarlatti.certloader.ui.model.ValueProvider;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -348,7 +344,7 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
 
     // TODO later call the real service
     public List<KeyStore> getDefaultKeyStores() {
-        return Data.keyStores();
+        return DefaultKeyStoreService.getDefaultKeyStores();
     }
 
     @Override

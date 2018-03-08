@@ -13,16 +13,14 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
 
 #IntelliJ files
-.idea
+.idea/
+.gradle/
+out/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-!intellij-xsd-plugin.jar
+
+build/
+!build/distributions/CertLoader-2.1.0.zip
