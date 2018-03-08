@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Saturday, 2/10/2018
  */
-public class TestUtils {
+public class Utils {
 
     public static void displayJPanel(JPanelProvider jPanelProvider, JPanelDisplayedCallback... jPanelDisplayedCallbacks) {
 

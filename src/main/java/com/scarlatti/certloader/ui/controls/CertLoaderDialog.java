@@ -1,6 +1,8 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.google.inject.Inject;
 import com.scarlatti.certloader.plugin.AppState;
+import com.scarlatti.certloader.services.LoadCertService;
 import com.scarlatti.certloader.services.Repository;
 import com.scarlatti.certloader.ui.UIComponent;
 
@@ -31,6 +33,7 @@ public class CertLoaderDialog implements UIComponent {
         loadState();
     }
 
+    @Inject
     public CertLoaderDialog(Repository<AppState> repository) {
         jPanel.setPreferredSize(new Dimension(640, 580));
         this.repository = repository;

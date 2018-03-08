@@ -1,4 +1,4 @@
-package com.scarlatti.certloader.plugin;
+package com.scarlatti.certloader.services;
 
 /**
  * ~     _____                                    __
@@ -9,22 +9,19 @@ package com.scarlatti.certloader.plugin;
  * ~  Tuesday, 12/12/2017
  */
 
+import com.scarlatti.certloader.exceptions.ProcessAbortedException;
+import com.scarlatti.certloader.plugin.Props;
+import com.scarlatti.certloader.exceptions.SSLConnectionException;
 import com.scarlatti.certloader.ssl.SavingTrustManager;
 import com.scarlatti.certloader.ssl.Utils;
-import com.scarlatti.certloader.ui.controls.CertLoaderDialogOld;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import javax.swing.*;
-import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -34,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.scarlatti.certloader.ssl.Utils.newKeyStore;
 import static com.scarlatti.certloader.ssl.Utils.newTrustManager;
 
-public class CertDownloader {
+public class DownloadCertService {
 
     private SSLContext sslContext;
     private SavingTrustManager trustManager;
@@ -43,7 +40,7 @@ public class CertDownloader {
     private static final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
     protected int SSL_CONNECTION_TIMEOUT_MS = 10000;
 
-    public CertDownloader(SSLContext sslContext, SavingTrustManager trustManager, KeyStore keyStore) {
+    public DownloadCertService(SSLContext sslContext, SavingTrustManager trustManager, KeyStore keyStore) {
         this.sslContext = sslContext;
         this.trustManager = trustManager;
         this.keyStore = keyStore;
@@ -54,7 +51,7 @@ public class CertDownloader {
         SavingTrustManager trustManager = newTrustManager(keyStore);
         SSLContext sslContext = Utils.newSSLContext(trustManager);
 
-        return new CertDownloader(sslContext,  trustManager, keyStore).doDownloadCerts(url);
+        return new DownloadCertService(sslContext,  trustManager, keyStore).doDownloadCerts(url);
     }
 
     public List<X509Certificate> doDownloadCerts(String url) {

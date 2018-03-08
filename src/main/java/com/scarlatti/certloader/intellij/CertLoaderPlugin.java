@@ -1,8 +1,9 @@
-package com.scarlatti.certloader.config;
+package com.scarlatti.certloader.intellij;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.scarlatti.certloader.intellij.CertLoaderAction;
 import org.jetbrains.annotations.NotNull;
 
 public class CertLoaderPlugin implements ApplicationComponent {

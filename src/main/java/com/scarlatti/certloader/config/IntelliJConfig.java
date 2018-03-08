@@ -4,8 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.intellij.openapi.components.ServiceManager;
+import com.scarlatti.certloader.intellij.PluginStateWrapper;
 import com.scarlatti.certloader.plugin.AppState;
-import com.scarlatti.certloader.plugin.PluginStateWrapper;
 import com.scarlatti.certloader.services.IntelliJRepository;
 import com.scarlatti.certloader.services.Repository;
 
@@ -16,7 +16,7 @@ import com.scarlatti.certloader.services.Repository;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Wednesday, 2/14/2018
  */
-public class AppPluginConfig extends AbstractModule {
+public class IntelliJConfig extends AbstractModule {
 
     @Override
     protected void configure() {

@@ -1,14 +1,20 @@
-package com.scarlatti.certloader.config;
+package com.scarlatti.certloader.intellij;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.scarlatti.certloader.config.IntelliJConfig;
+import com.scarlatti.certloader.config.LocalConfig;
 import com.scarlatti.certloader.plugin.AppState;
-import com.scarlatti.certloader.plugin.InstallAction;
-import com.scarlatti.certloader.plugin.LoadAction;
-import com.scarlatti.certloader.plugin.PluginStateWrapper;
+import com.scarlatti.certloader.plugin.IntelliJAppRunner;
+import com.scarlatti.certloader.plugin.LocalAppRunner;
+import com.scarlatti.certloader.services.InstallCertService;
+import com.scarlatti.certloader.services.LoadCertService;
+import com.scarlatti.certloader.intellij.PluginStateWrapper;
 import com.scarlatti.certloader.services.IntelliJRepository;
 import com.scarlatti.certloader.services.Repository;
 import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
@@ -40,31 +46,8 @@ public class CertLoaderAction extends AnAction {
     }
 
     private void showDialog() {
-
-        Repository<AppState> repository = new IntelliJRepository<>(ServiceManager.getService(PluginStateWrapper.class));
-
-        CertLoaderDialog certLoaderDialog = new CertLoaderDialog(repository);
-
-        certLoaderDialog.getUrlToolbar().setLoadAction(
-            new LoadAction(certLoaderDialog.getCertListWrapper())
-        );
-
-        certLoaderDialog.getCertListWrapper().getCertList().setInstallCallback(certs -> {
-            new InstallAction(certLoaderDialog.getJPanel()).install(certs, certLoaderDialog.getAppManager().getListKeyStores().getCheckedKeyStores());
-        });
-
-
-        DialogBuilder builder = new DialogBuilder();
-        builder.setCenterPanel(certLoaderDialog.getJPanel());
-        builder.setDimensionServiceKey("CertLoaderPluginDialog");
-        builder.setTitle("Install SSL Certificate(s)");
-        builder.removeAllActions();
-//        builder.addOkAction();
-//        builder.addCancelAction();
-
-        builder.show();
-
-        certLoaderDialog.saveOnClose();
+        Injector injector = Guice.createInjector(new IntelliJConfig());
+        injector.getInstance(IntelliJAppRunner.class).run();
     }
 
     private void performActionWithPersistentStateImplementation() {

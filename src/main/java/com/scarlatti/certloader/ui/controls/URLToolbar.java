@@ -1,5 +1,7 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.google.inject.Inject;
+import com.scarlatti.certloader.services.LoadCertService;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
@@ -20,6 +22,11 @@ public class URLToolbar implements UIComponent {
 
     private boolean loading = false;
     private AbstractLoadAction loadAction = noOpLoadAction();
+
+    @Inject
+    public URLToolbar(LoadCertService loadCertService) {
+        loadAction = loadCertService;
+    }
 
     public URLToolbar() {
         setupListeners();

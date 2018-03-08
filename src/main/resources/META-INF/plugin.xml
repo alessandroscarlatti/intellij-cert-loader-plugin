@@ -26,7 +26,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
-    <applicationService serviceImplementation="com.scarlatti.certloader.plugin.PluginStateWrapper"/>
+    <applicationService serviceImplementation="com.scarlatti.certloader.intellij.PluginStateWrapper"/>
   </extensions>
 
   <actions>
@@ -36,7 +36,7 @@
   <application-components>
     <!-- Add your application components here -->
     <component>
-      <implementation-class>com.scarlatti.certloader.config.CertLoaderPlugin</implementation-class>
+      <implementation-class>com.scarlatti.certloader.intellij.CertLoaderPlugin</implementation-class>
     </component>
   </application-components>
 

@@ -1,7 +1,6 @@
 package com.scarlatti.certloader.ui;
 
 import com.scarlatti.certloader.ui.controls.EditKeystore;
-import com.scarlatti.certloader.ui.controls.Testasdf;
 import org.junit.Test;
 
 /**
@@ -15,21 +14,21 @@ public class EditKeystoreTest {
 
     @Test
     public void displayDialogDefault() {
-        TestUtils.DisplayJPanel(() ->
+        TestUtils.displayJPanel(() ->
             new EditKeystore().getJPanel()
         );
     }
 
     @Test
     public void displayDialogWithDataPassedIn() {
-        TestUtils.DisplayJPanel(() ->
+        TestUtils.displayJPanel(() ->
             new EditKeystore(ListKeyStoresTest.Data.KeyStores.sample2()).getJPanel()
         );
     }
 
     @Test
     public void displayDialogAndEditDataPassedIn() {
-        TestUtils.DisplayJPanel(() ->
+        TestUtils.displayJPanel(() ->
             new EditKeystore(ListKeyStoresTest.Data.KeyStores.sample2()).getJPanel()
         );
     }

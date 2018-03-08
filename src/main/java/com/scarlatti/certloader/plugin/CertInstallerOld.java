@@ -9,9 +9,10 @@ package com.scarlatti.certloader.plugin;
  * ~  Tuesday, 12/12/2017
  */
 
-import com.scarlatti.certloader.ui.controls.CertLoaderDialogOld;
+import com.scarlatti.certloader.exceptions.ProcessAbortedException;
 import com.scarlatti.certloader.ssl.SavingTrustManager;
 import com.scarlatti.certloader.ssl.Utils;
+import com.scarlatti.certloader.ui.controls.CertLoaderDialogOld;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -31,7 +32,7 @@ import java.util.concurrent.CountDownLatch;
 import static com.scarlatti.certloader.ssl.Utils.newKeyStore;
 import static com.scarlatti.certloader.ssl.Utils.newTrustManager;
 
-public class CertInstaller {
+public class CertInstallerOld {
 
     private SSLContext sslContext;
     private SavingTrustManager trustManager;
@@ -40,7 +41,7 @@ public class CertInstaller {
     private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
     protected int SSL_CONNECTION_TIMEOUT_MS = 10000;
 
-    public CertInstaller(SSLContext sslContext, SavingTrustManager trustManager, KeyStore keyStore) {
+    public CertInstallerOld(SSLContext sslContext, SavingTrustManager trustManager, KeyStore keyStore) {
         this.sslContext = sslContext;
         this.trustManager = trustManager;
         this.keyStore = keyStore;
@@ -51,7 +52,7 @@ public class CertInstaller {
         SavingTrustManager trustManager = newTrustManager(keyStore);
         SSLContext sslContext = Utils.newSSLContext(trustManager);
 
-        new CertInstaller(sslContext,  trustManager, keyStore).doInstallCert();
+        new CertInstallerOld(sslContext,  trustManager, keyStore).doInstallCert();
     }
 
     public void doInstallCert() {

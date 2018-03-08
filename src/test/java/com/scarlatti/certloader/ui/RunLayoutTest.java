@@ -14,7 +14,7 @@ public class RunLayoutTest {
 
     @Test
     public void displayDialog() {
-        TestUtils.DisplayJPanel(() ->
+        TestUtils.displayJPanel(() ->
             new TestLayout().getJPanel()
         );
     }

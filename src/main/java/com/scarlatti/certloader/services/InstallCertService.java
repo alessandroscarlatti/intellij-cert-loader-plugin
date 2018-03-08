@@ -1,4 +1,4 @@
-package com.scarlatti.certloader.plugin;
+package com.scarlatti.certloader.services;
 
 import com.scarlatti.certloader.services.runAsRoot.RootExecutor;
 import com.scarlatti.certloader.ui.model.Cert;
@@ -22,11 +22,11 @@ import java.util.List;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Tuesday, 2/20/2018
  */
-public class InstallAction {
+public class InstallCertService {
 
     private JPanel parent;
 
-    public InstallAction(JPanel parent) {
+    public InstallCertService(JPanel parent) {
         this.parent = parent;
     }
 

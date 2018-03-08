@@ -1,6 +1,6 @@
-package com.scarlatti.certloader.plugin;
+package com.scarlatti.certloader.services;
 
-import com.scarlatti.certloader.ui.controls.CertList;
+import com.scarlatti.certloader.exceptions.ProcessAbortedException;
 import com.scarlatti.certloader.ui.controls.CertListWrapper;
 import com.scarlatti.certloader.ui.controls.URLToolbar;
 import com.scarlatti.certloader.ui.model.Cert;
@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Sunday, 2/11/2018
  */
-public class LoadAction extends URLToolbar.AbstractLoadAction {
+public class LoadCertService extends URLToolbar.AbstractLoadAction {
 
     private Thread loadingThread;
     private CertListWrapper certListWrapper;
@@ -29,7 +29,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
     private List<Cert> certs;
     private Exception exception;
 
-    public LoadAction(CertListWrapper certListWrapper) {
+    public LoadCertService(CertListWrapper certListWrapper) {
         this.certListWrapper = certListWrapper;
     }
 
@@ -52,7 +52,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
         this.errorCallback = errorCallback;
         this.url = url;
         latch = new CountDownLatch(1);
-        loadingThread = new Thread(this::download, "LoadAction");
+        loadingThread = new Thread(this::download, "LoadCertService");
         loadingThread.start();
 
         // now wait for the countdown latch...
@@ -95,7 +95,7 @@ public class LoadAction extends URLToolbar.AbstractLoadAction {
                 latch.countDown();
             });
 
-            rawCerts = CertDownloader.downloadCerts(url);
+            rawCerts = DownloadCertService.downloadCerts(url);
             certs = buildViewModelCerts(rawCerts);
             latch.countDown();
         } catch (Exception e) {

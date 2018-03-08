@@ -1,8 +1,9 @@
-package com.scarlatti.certloader.plugin;
+package com.scarlatti.certloader.intellij;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.scarlatti.certloader.plugin.AppState;
 import org.jetbrains.annotations.Nullable;
 
 /**

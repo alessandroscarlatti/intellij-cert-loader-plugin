@@ -1,4 +1,4 @@
-package com.scarlatti.certloader.plugin;
+package com.scarlatti.certloader.exceptions;
 
 /**
  * ~     _____                                    __

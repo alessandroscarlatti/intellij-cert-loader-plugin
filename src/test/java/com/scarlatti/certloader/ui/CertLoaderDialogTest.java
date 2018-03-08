@@ -1,14 +1,13 @@
 package com.scarlatti.certloader.ui;
 
-import com.scarlatti.certloader.plugin.InstallAction;
-import com.scarlatti.certloader.plugin.LoadAction;
+import com.scarlatti.certloader.services.InstallCertService;
+import com.scarlatti.certloader.services.LoadCertService;
 import com.scarlatti.certloader.ui.controls.CertList;
 import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
 import com.scarlatti.certloader.ui.controls.URLToolbar;
 import com.scarlatti.certloader.ui.model.Cert;
 import org.junit.Test;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class CertLoaderDialogTest {
 
     @Test
     public void displayDialog() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
 
             List<Cert> certs = Arrays.asList(
                 CertListTest.Data.Certs.sample1(),
@@ -74,15 +73,15 @@ public class CertLoaderDialogTest {
 
     @Test
     public void testDownloadCerts() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             CertLoaderDialog certLoaderDialog = new CertLoaderDialog();
             certLoaderDialog.getJPanel().revalidate();
             certLoaderDialog.getUrlToolbar().setLoadAction(
-                new LoadAction(certLoaderDialog.getCertListWrapper())
+                new LoadCertService(certLoaderDialog.getCertListWrapper())
             );
 
             certLoaderDialog.getCertListWrapper().getCertList().setInstallCallback(certs -> {
-                new InstallAction(certLoaderDialog.getJPanel()).install(certs, certLoaderDialog.getAppManager().getListKeyStores().getCheckedKeyStores());
+                new InstallCertService(certLoaderDialog.getJPanel()).install(certs, certLoaderDialog.getAppManager().getListKeyStores().getCheckedKeyStores());
             });
 
             return certLoaderDialog.getJPanel();

@@ -1,9 +1,6 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import com.scarlatti.certloader.plugin.CertInstaller;
+import com.scarlatti.certloader.plugin.CertInstallerOld;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
@@ -43,7 +40,7 @@ public class CertLoaderDialogOld implements UIComponent {
         getCertsButton.addActionListener((e -> {
             try {
                 new Thread(() -> {
-                    CertInstaller.installCert();
+                    CertInstallerOld.installCert();
                 }).start();
 
             } catch (Exception e1) {
