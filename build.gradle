@@ -12,11 +12,12 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
 
+def certLoaderPluginName = 'CertLoader'
 
 intellij {
     localPath 'C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2017.2.5'
     plugins 'coverage' //Bundled plugin dependencies
-    pluginName 'CertLoader'
+    pluginName certLoaderPluginName
 }
 
 repositories {
@@ -32,3 +33,10 @@ dependencies {
 
 group 'com.scarlatti'
 version '2.1.0' // Plugin version
+
+task copyDistribution(type: Copy) {
+    from "build/distributions/${certLoaderPluginName}-${version}.zip"
+    into "distr"
+}
+
+buildPlugin.finalizedBy copyDistribution

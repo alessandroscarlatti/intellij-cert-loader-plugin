@@ -23,4 +23,3 @@ out/
 hs_err_pid*
 
 build/
-!build/distributions/CertLoader-2.1.0.zip
