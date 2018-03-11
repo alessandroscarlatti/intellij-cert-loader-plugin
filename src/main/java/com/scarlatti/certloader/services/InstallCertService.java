@@ -1,6 +1,6 @@
 package com.scarlatti.certloader.services;
 
-import com.scarlatti.certloader.services.runAsRoot.RootExecutor;
+import com.scarlatti.certloader.services.dyorgio.runAsRoot.RootExecutor;
 import com.scarlatti.certloader.ui.model.Cert;
 import com.scarlatti.certloader.ui.model.KeyStore;
 
@@ -22,9 +22,9 @@ import java.util.List;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Tuesday, 2/20/2018
  */
-public class InstallCertService {
+public class InstallCertService implements Serializable {
 
-    private JPanel parent;
+    private transient JPanel parent;
 
     public InstallCertService(JPanel parent) {
         this.parent = parent;
@@ -40,7 +40,8 @@ public class InstallCertService {
         try {
 
             if (keyStores.size() > 0) {
-                installAsCurrentUser(certs, keyStores);
+//                installAsCurrentUser(certs, keyStores);
+                installAsRoot(certs, keyStores);
             }
 
             // if all were successful show a success message.
@@ -64,18 +65,20 @@ public class InstallCertService {
 
         Thread.currentThread().setContextClassLoader(classLoader);
         RootExecutor rootExecutor = new RootExecutor();
-        rootExecutor.run(() ->
-            doInstall(certs, keyStores));
+        rootExecutor.call(() -> {
+            doInstall(certs, keyStores);
+            return "done";
+        });
     }
 
     private URLClassLoader getURLClassLoader() {
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = this.getClass().getClassLoader();
 
         if (classLoader instanceof URLClassLoader) {
             URL[] urls = ((URLClassLoader) classLoader).getURLs();
             return new URLClassLoader(urls, classLoader);
-        } else if (classLoader.getClass().getName().equals(com.intellij.util.lang.UrlClassLoader.class.getName())) {
+        } else if (classLoader.getClass().getName().equals(com.intellij.ide.plugins.cl.PluginClassLoader.class.getName())) {
             return getIntellijCustomClassLoader(classLoader);
         } else {
             throw new IllegalStateException(

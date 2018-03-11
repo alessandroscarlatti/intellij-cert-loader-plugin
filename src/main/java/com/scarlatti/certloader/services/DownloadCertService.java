@@ -82,9 +82,7 @@ public class DownloadCertService {
      */
     protected void processURL(String url, Props props) {
 
-        //first trim off any http:// or https://
-        if (url.startsWith("http://")) url = url.replaceFirst("http://", "");
-        if (url.startsWith("https://")) url = url.replaceFirst("https://", "");
+        url = getHost(url);
 
         String[] urlPieces = url.split(":");
 
@@ -101,6 +99,25 @@ public class DownloadCertService {
 
         props.setHost(host);
         props.setPort(port);
+    }
+
+    public static String getHost(String url) {
+        // trim white space
+        url = url.trim();
+
+        //first trim off any http:// or https://
+        if (url.startsWith("http://")) url = url.replaceFirst("http://", "");
+        if (url.startsWith("https://")) url = url.replaceFirst("https://", "");
+
+        // then trim off any trailing //
+        while (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
+        }
+
+        // now split on / to get the host
+        url = url.split("/")[0];
+
+        return url;
     }
 
     // TODO I want this to throw an exception...

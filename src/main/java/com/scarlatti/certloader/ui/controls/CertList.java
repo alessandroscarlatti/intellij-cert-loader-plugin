@@ -1,14 +1,9 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.Cert;
 
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
@@ -17,7 +12,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,16 +66,23 @@ public class CertList implements UIComponent {
     }
 
     private void setupTitle(String url) {
-        this.url = url;
-
         // parse the text for the url
         // needs to start with https://
-
-        if (!url.startsWith("https://")) {
-            url = "https://" + url;
-        }
+        url = formatUrl(url);
 
         urlLink.setText("<html><u>" + url + "</u></html>");
+
+        this.url = url;
+    }
+
+    public static String formatUrl(String url) {
+        // trim white space
+        url = url.trim();
+
+        //first trim off any http:// or https://
+        if (!url.startsWith("https://")) url = "https://" + url;
+
+        return url;
     }
 
     private void setupTable() {

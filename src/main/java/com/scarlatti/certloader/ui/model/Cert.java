@@ -1,5 +1,6 @@
 package com.scarlatti.certloader.ui.model;
 
+import java.io.Serializable;
 import java.security.cert.X509Certificate;
 
 /**
@@ -9,9 +10,9 @@ import java.security.cert.X509Certificate;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Saturday, 2/10/2018
  */
-public class Cert {
-    private int key;
-    private boolean selected;
+public class Cert implements Serializable {
+    private transient int key;
+    private transient boolean selected;
     private String companyName;
     private String locationName;
     private X509Certificate rawCert;
