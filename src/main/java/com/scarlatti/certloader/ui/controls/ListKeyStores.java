@@ -2,6 +2,7 @@ package com.scarlatti.certloader.ui.controls;
 
 import com.scarlatti.certloader.services.DefaultKeyStoreService;
 import com.scarlatti.certloader.ui.UIComponent;
+import com.scarlatti.certloader.ui.Utils;
 import com.scarlatti.certloader.ui.model.KeyStore;
 import com.scarlatti.certloader.ui.model.ValueProvider;
 
@@ -200,7 +201,8 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
             removeAllKeyStores();
             addKeyStores(defaultKeyStores);
         } catch (Exception exc) {
-            exc.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    SwingUtilities.getWindowAncestor(jPanel), Utils.buildExceptionViewer(exc), "Error Getting Default Key Stores", JOptionPane.ERROR_MESSAGE);
         }
     }
 

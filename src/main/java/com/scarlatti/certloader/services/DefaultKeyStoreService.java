@@ -2,16 +2,10 @@ package com.scarlatti.certloader.services;
 
 import com.scarlatti.certloader.ui.model.KeyStore;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -48,13 +42,35 @@ public class DefaultKeyStoreService {
             }
         }
 
-        try (Stream<Path> stream = Files.find(searchStartPath, 10,
-            (path, attr) -> path.getFileName().toString().equals("cacerts") )) {
-            stream.forEach((path) -> {
-                keyStorePaths.add(path.toString());
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+        try {
+            Files.walkFileTree(searchStartPath, new HashSet<>(Collections.singletonList(FileVisitOption.FOLLOW_LINKS)),
+                    Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path path , BasicFileAttributes attrs) throws IOException {
+
+                            if (path.getFileName().toString().equals("cacerts")) {
+                                System.out.printf("Visiting file %s\n", path);
+                                keyStorePaths.add(path.toString());
+                            }
+
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFileFailed(Path file , IOException e) throws IOException {
+                            System.err.printf("Visiting failed for %s\n", file);
+
+                            return FileVisitResult.SKIP_SUBTREE;
+                        }
+
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir , BasicFileAttributes attrs) throws IOException {
+                            System.out.printf("About to visit directory %s\n", dir);
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting default key stores.", e);
         }
 
         return buildKeyStores(keyStorePaths);
