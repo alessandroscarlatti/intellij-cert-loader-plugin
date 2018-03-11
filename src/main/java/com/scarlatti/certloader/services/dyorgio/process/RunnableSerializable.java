@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************** */
-package com.scarlatti.certloader.services.dyorgio.runAsRoot;
+package com.scarlatti.certloader.services.dyorgio.process;
 
-import com.scarlatti.certloader.services.dyorgio.process.ProcessBuilderFactory;
+import java.io.Serializable;
 
 /**
- * Wraps out process commands into a elevate privileged command.
+ * A <code>Runnable</code> and <code>Serializable</code> interface. Usefull for
+ * fast encapsulation of pieces of code and lambdas.
  *
  * @author dyorgio
+ * @serial
+ * @see Runnable
+ * @see Serializable
  */
-public interface RootProcessManager extends ProcessBuilderFactory {
+public interface RunnableSerializable extends Runnable, Serializable {
 
-    /**Verify out process return code and throw exception according with it value.
-     * 
-     * @param code Out process return code.
-     * @throws NotAuthorizedException If used user doesn't have root privileges.
-     * @throws UserCanceledException If user canceled or close prompt dialog.
-     */
-    void handleCode(int code) throws NotAuthorizedException, UserCanceledException;
 }

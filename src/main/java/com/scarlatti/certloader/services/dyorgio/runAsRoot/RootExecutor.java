@@ -18,9 +18,9 @@ package com.scarlatti.certloader.services.dyorgio.runAsRoot;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.impl.LinuxRootProcessManager;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.impl.MacRootProcessManager;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.impl.WinRootProcessManager;
-import com.scarlatti.certloader.services.dyorgio.runtime.out.process.CallableSerializable;
-import com.scarlatti.certloader.services.dyorgio.runtime.out.process.OneRunOutProcess;
-import com.scarlatti.certloader.services.dyorgio.runtime.out.process.RunnableSerializable;
+import com.scarlatti.certloader.services.dyorgio.process.CallableSerializable;
+import com.scarlatti.certloader.services.dyorgio.process.OneRunOutProcess;
+import com.scarlatti.certloader.services.dyorgio.process.RunnableSerializable;
 
 import java.io.IOException;
 import java.io.Serializable;

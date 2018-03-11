@@ -13,22 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************** */
-package com.scarlatti.certloader.services.dyorgio.runAsRoot;
+package com.scarlatti.certloader.services.dyorgio.process;
 
-import com.scarlatti.certloader.services.dyorgio.process.ProcessBuilderFactory;
+import java.util.List;
 
 /**
- * Wraps out process commands into a elevate privileged command.
+ * Create a new ProcessBuilder from a list os commands.
  *
  * @author dyorgio
  */
-public interface RootProcessManager extends ProcessBuilderFactory {
+public interface ProcessBuilderFactory {
 
-    /**Verify out process return code and throw exception according with it value.
-     * 
-     * @param code Out process return code.
-     * @throws NotAuthorizedException If used user doesn't have root privileges.
-     * @throws UserCanceledException If user canceled or close prompt dialog.
-     */
-    void handleCode(int code) throws NotAuthorizedException, UserCanceledException;
+    ProcessBuilder create(List<String> commands) throws Exception;
 }
