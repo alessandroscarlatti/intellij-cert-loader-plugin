@@ -98,7 +98,7 @@ public class WinRootProcessManager implements RootProcessManager {
             out.flush();
         }
 
-        return new ProcessBuilder("cmd.exe", "/c ", file.getAbsolutePath()).inheritIO();
+        return new ProcessBuilder("cmd.exe", "/c ", file.getAbsolutePath());
     }
 
     @Override

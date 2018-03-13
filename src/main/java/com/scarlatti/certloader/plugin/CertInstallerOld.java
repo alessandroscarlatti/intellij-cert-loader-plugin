@@ -148,7 +148,7 @@ public class CertInstallerOld {
                     socket.startHandshake();
                     socket.close();
                     System.out.println();
-                    System.out.println("No ,errors, certificate is already trusted");
+                    System.out.println("No errors, certificate is already trusted");
                 } catch (SSLException e) {
                     System.out.println();
                     e.printStackTrace(System.out);

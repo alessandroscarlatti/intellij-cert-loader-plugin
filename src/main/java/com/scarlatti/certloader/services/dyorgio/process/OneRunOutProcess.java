@@ -17,11 +17,14 @@ package com.scarlatti.certloader.services.dyorgio.process;
 
 import com.scarlatti.certloader.services.dyorgio.process.entrypoint.OneRunRemoteMain;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.UserCanceledException;
+import com.scarlatti.certloader.ui.controls.TextAreaLogger;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static com.scarlatti.certloader.services.dyorgio.process.OutProcessUtils.RUNNING_AS_OUT_PROCESS;
 import static com.scarlatti.certloader.services.dyorgio.process.OutProcessUtils.getCurrentClasspath;
@@ -161,15 +164,26 @@ public class OneRunOutProcess implements Serializable {
             ProcessBuilder builder = processBuilderFactory.create(commandList);
 
 
+
+
 //            builder.environment().put("COMMA_SEPARATED_ARGS_LIST", commaSeparatedArgsList);
 
             // TODO probably don't need these...
-            builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            builder.redirectError(ProcessBuilder.Redirect.INHERIT);
+//            builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+//            builder.redirectError(ProcessBuilder.Redirect.INHERIT);
+
+//            builder.inheritIO();
 
             Process process = builder.start();
 
-            int returnCode = process.waitFor();
+            StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), System.err::println);
+
+            new Thread(outputGobbler).start();
+            new Thread(errorGobbler).start();
+
+            int returnCode = process.waitFor(10, TimeUnit.SECONDS) ? 1 : 0;
+
             System.out.println("got return code: " + returnCode);
 
             if (returnCode != 0) {
@@ -186,6 +200,29 @@ public class OneRunOutProcess implements Serializable {
             throw new ExecutionException("Callable timed out.", e);
         } catch (Exception e) {
             throw new ExecutionException("Error executing callable.", e);
+        }
+    }
+
+    public static class StreamGobbler implements Runnable {
+        private InputStream inputStream;
+        private Consumer<String> consumeInputLine;
+
+        public StreamGobbler(InputStream inputStream, Consumer<String> consumeInputLine) {
+            this.inputStream = inputStream;
+            this.consumeInputLine = consumeInputLine;
+        }
+
+        public void run() {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            try {
+                String line = null;
+                while ((line = bufferedReader.readLine()) != null)
+                    System.out.println(line);
+                    consumeInputLine.accept(line);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
     }
 

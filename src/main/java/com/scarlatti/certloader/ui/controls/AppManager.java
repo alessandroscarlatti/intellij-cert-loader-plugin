@@ -16,9 +16,9 @@ import java.awt.*;
  * Monday, 2/19/2018
  */
 public class AppManager implements UIComponent {
-    private JTabbedPane tabbedPane1;
     private JPanel jPanel;
     private ListKeyStores listKeyStores;
+    private TextAreaLogger textAreaLogger;
 
     @Override
     public JPanel getJPanel() {
@@ -33,4 +33,7 @@ public class AppManager implements UIComponent {
         this.listKeyStores = listKeyStores;
     }
 
+    public TextAreaLogger getTextAreaLogger() {
+        return textAreaLogger;
+    }
 }

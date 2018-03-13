@@ -48,7 +48,8 @@ public class InstallCertService implements Serializable {
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(parent), "Successfully installed " + certs.size() + " certificate(s) to " + keyStores.size() + " key stores.");
 
         } catch (Exception e) {
-            // if all failed show a failed message
+            // if all failed print the exception and show a failed message
+            e.printStackTrace();
             JOptionPane.showMessageDialog(
                 parent , buildExceptionViewer(e), "Error installing certificate(s)", JOptionPane.ERROR_MESSAGE);
         }
@@ -75,15 +76,20 @@ public class InstallCertService implements Serializable {
 
         ClassLoader classLoader = this.getClass().getClassLoader();
 
+        System.out.println("this classloader: " + classLoader);
+        System.out.println("has class: " + classLoader.getClass().getName());
+
         if (classLoader instanceof URLClassLoader) {
             URL[] urls = ((URLClassLoader) classLoader).getURLs();
             return new URLClassLoader(urls, classLoader);
-        } else if (classLoader.getClass().getName().equals(com.intellij.ide.plugins.cl.PluginClassLoader.class.getName())) {
-            return getIntellijCustomClassLoader(classLoader);
         } else {
-            throw new IllegalStateException(
-                "Cannot provide adequate classloader.  Need java.net.URLClassloader, but current classloader is: " +
-                    classLoader.getClass().getName());
+            try {
+                return getIntellijCustomClassLoader(classLoader);
+            } catch (Exception e) {
+                throw new IllegalStateException(
+                    "Cannot provide adequate classloader.  Need java.net.URLClassloader, but current classloader is: " +
+                        classLoader.getClass().getName(), e);
+            }
         }
     }
 

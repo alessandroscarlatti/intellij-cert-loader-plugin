@@ -88,7 +88,7 @@ public class CertLoaderDialog implements UIComponent {
     }
 
     private void setupHooks() {
-//        SwingUtilities.getWindowAncestor(jPanel);
+        // can't set window hook here, because we don't have a window yet!
     }
 
     public URLToolbar getUrlToolbar() {
