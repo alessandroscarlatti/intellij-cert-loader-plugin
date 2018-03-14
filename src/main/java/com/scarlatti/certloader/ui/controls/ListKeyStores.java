@@ -196,14 +196,16 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
     }
 
     private void restoreDefaults(ActionEvent e) {
-        try {
-            List<KeyStore> defaultKeyStores = getDefaultKeyStores();
-            removeAllKeyStores();
-            addKeyStores(defaultKeyStores);
-        } catch (Exception exc) {
-            JOptionPane.showMessageDialog(
-                    SwingUtilities.getWindowAncestor(jPanel), Utils.buildExceptionViewer(exc), "Error Getting Default Key Stores", JOptionPane.ERROR_MESSAGE);
-        }
+        new Thread(() -> {
+            try {
+                List<KeyStore> defaultKeyStores = getDefaultKeyStores();
+                removeAllKeyStores();
+                addKeyStores(defaultKeyStores);
+            } catch (Exception exc) {
+                JOptionPane.showMessageDialog(
+                        SwingUtilities.getWindowAncestor(jPanel), Utils.buildExceptionViewer(exc), "Error Getting Default Key Stores", JOptionPane.ERROR_MESSAGE);
+            }
+        }).start();
     }
 
     private void setupButtons() {
