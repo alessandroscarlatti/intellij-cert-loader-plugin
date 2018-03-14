@@ -27,6 +27,7 @@ public class TextAreaLogger implements UIComponent {
 
     public TextAreaLogger() {
         initLogger();
+        setupClearAction();
     }
 
     public void initLogger() {
@@ -38,6 +39,12 @@ public class TextAreaLogger implements UIComponent {
 
         capturingStdErr = capturingOutputStream(originalStdErr);
         System.setErr(capturingStdErr);
+    }
+
+    public void setupClearAction() {
+        clearButton.addActionListener((actionEvent) -> {
+            logger.setText("");
+        });
     }
 
     public PrintStream capturingOutputStream(PrintStream originalStream) {

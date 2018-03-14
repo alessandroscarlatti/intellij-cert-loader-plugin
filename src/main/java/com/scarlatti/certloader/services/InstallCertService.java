@@ -1,6 +1,8 @@
 package com.scarlatti.certloader.services;
 
+import com.scarlatti.certloader.exceptions.AccessDeniedException;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.RootExecutor;
+import com.scarlatti.certloader.services.dyorgio.runAsRoot.UserCanceledException;
 import com.scarlatti.certloader.ui.model.Cert;
 import com.scarlatti.certloader.ui.model.KeyStore;
 
@@ -40,13 +42,18 @@ public class InstallCertService implements Serializable {
         try {
 
             if (keyStores.size() > 0) {
-//                installAsCurrentUser(certs, keyStores);
-                installAsRoot(certs, keyStores);
+                try {
+                    installAsCurrentUser(certs, keyStores);
+                } catch (AccessDeniedException e) {
+                    installAsRoot(certs, keyStores);
+                }
             }
 
             // if all were successful show a success message.
             JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(parent), "Successfully installed " + certs.size() + " certificate(s) to " + keyStores.size() + " key stores.");
 
+        } catch (UserCanceledException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             // if all failed print the exception and show a failed message
             e.printStackTrace();
@@ -107,7 +114,7 @@ public class InstallCertService implements Serializable {
             for (KeyStore keyStore : keyStores) {
 
                 if (!Files.isWritable(Paths.get(keyStore.getPath()))) {
-                    throw new IllegalStateException("User does not possess sufficient privilege to write to keystore at " + keyStore.getPath() + ". Consider restarting this application as an Administrator.");
+                    throw new AccessDeniedException("User does not possess sufficient privilege to write to keystore at " + keyStore.getPath() + ". Consider restarting this application as an Administrator.");
                 }
 
                 for (int i = 0; i < certs.size(); i++) {
@@ -131,6 +138,8 @@ public class InstallCertService implements Serializable {
                     System.out.println("Added certificate to keystore " + keyStore.getPath() + " using alias '" + alias + "'");
                 }
             }
+        } catch (AccessDeniedException e) {
+            throw e;
         } catch (Exception e) {
             // if all failed show a failed message
             throw new RuntimeException("Error installing certificate(s).  See exception message for details...", e);

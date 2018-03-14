@@ -163,17 +163,6 @@ public class OneRunOutProcess implements Serializable {
             // adjust in processBuilderFactory and starts
             ProcessBuilder builder = processBuilderFactory.create(commandList);
 
-
-
-
-//            builder.environment().put("COMMA_SEPARATED_ARGS_LIST", commaSeparatedArgsList);
-
-            // TODO probably don't need these...
-//            builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-//            builder.redirectError(ProcessBuilder.Redirect.INHERIT);
-
-//            builder.inheritIO();
-
             Process process = builder.start();
 
             StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
@@ -182,7 +171,9 @@ public class OneRunOutProcess implements Serializable {
             new Thread(outputGobbler).start();
             new Thread(errorGobbler).start();
 
-            int returnCode = process.waitFor(10, TimeUnit.SECONDS) ? 1 : 0;
+            process.getOutputStream().close();
+
+            int returnCode = process.waitFor();
 
             System.out.println("got return code: " + returnCode);
 
@@ -198,6 +189,8 @@ public class OneRunOutProcess implements Serializable {
 
         } catch (SocketTransaction.TransactionTimeoutException e) {
             throw new ExecutionException("Callable timed out.", e);
+        } catch (UserCanceledException e) {
+            throw e;
         } catch (Exception e) {
             throw new ExecutionException("Error executing callable.", e);
         }
@@ -216,9 +209,8 @@ public class OneRunOutProcess implements Serializable {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
             try {
-                String line = null;
+                String line;
                 while ((line = bufferedReader.readLine()) != null)
-                    System.out.println(line);
                     consumeInputLine.accept(line);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
