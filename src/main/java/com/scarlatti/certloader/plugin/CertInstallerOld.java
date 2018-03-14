@@ -229,7 +229,7 @@ public class CertInstallerOld {
 //            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 //
 //            try (FileInputStream in = new FileInputStream(new File(props.getKeystorePath()))) {
-//                keyStore.load(in, props.getKeystorePassword().toCharArray());
+//                keyStore.loadUrl(in, props.getKeystorePassword().toCharArray());
 //            }
 //
 //            keyStore.setCertificateEntry(alias, cert);

@@ -59,6 +59,11 @@ public class CertLoaderDialogTest {
                 }
 
                 @Override
+                public void loadFromFile(String path, byte[] bytes, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
+
+                }
+
+                @Override
                 public void cancel(ActionCompletedCallback callback) {
                     // cancel loading here...
                     loadingThread.interrupt();

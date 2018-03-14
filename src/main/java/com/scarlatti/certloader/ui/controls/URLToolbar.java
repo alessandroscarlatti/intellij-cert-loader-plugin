@@ -3,10 +3,17 @@ package com.scarlatti.certloader.ui.controls;
 import com.google.inject.Inject;
 import com.scarlatti.certloader.services.LoadCertService;
 import com.scarlatti.certloader.ui.UIComponent;
+import com.scarlatti.certloader.ui.controls.filechooser.WindowsFileChooser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -19,6 +26,7 @@ public class URLToolbar implements UIComponent {
     private JTextField url;
     private JButton downloadButton;
     private JPanel jPanel;
+    private JButton chooseCertFileButton;
 
     private boolean loading = false;
     private AbstractLoadAction loadAction = noOpLoadAction();
@@ -35,13 +43,43 @@ public class URLToolbar implements UIComponent {
     private void setupListeners() {
         downloadButton.addActionListener(this::doStartDownload);
         url.addActionListener(this::doStartDownload);
+        chooseCertFileButton.addActionListener(this::doChooseFile);
     }
 
     private void doStartDownload(ActionEvent e) {
         if (loading) {
             cancel();
         } else {
-            load();
+            loadUrl();
+        }
+    }
+
+    private void doChooseFile(ActionEvent event) {
+        if (!loading) {
+            String filePath = chooseFile();
+            loadFile(filePath);
+        }
+    }
+
+    private String chooseFile() {
+        try {
+            File selectedFile = new WindowsFileChooser()
+                .withFilter("All Files", "*")
+                .withTitle("Choose Certificate File")
+                .withInitialFile(url.getText())
+                .withParent(jPanel)
+                .existingFilesOnly()
+                .prompt();
+
+            if (selectedFile != null) {
+                return selectedFile.getAbsolutePath();
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -49,12 +87,36 @@ public class URLToolbar implements UIComponent {
         this.loadAction = loadAction;
     }
 
-    public void load() {
+    public void loadUrl() {
         setLoading(true);
+
+        if (isLocal(url.getText())) {
+            loadFile(url.getText());
+            return;
+        }
 
         new Thread(() -> {
             // ... and do the loading stuff here...
             loadAction.load(url.getText(), () -> {
+                setLoading(false);
+            }, () -> {
+                setLoading(false);
+            });
+        }).start();
+    }
+
+    public boolean isLocal(String url) {
+        return url.startsWith("\\") || url.startsWith("//") || url.toUpperCase().startsWith("C:");
+    }
+
+    public void loadFile(String path) {
+        setLoading(true);
+
+        setUrl(path);
+
+        new Thread(() -> {
+            // ... and do the loading stuff here...
+            loadAction.loadFromFile(path, null, () -> {
                 setLoading(false);
             }, () -> {
                 setLoading(false);
@@ -117,6 +179,8 @@ public class URLToolbar implements UIComponent {
     public static abstract class AbstractLoadAction {
         public abstract void load(String url, ActionCompletedCallback callback, ActionCompletedCallback errorCallback);
 
+        public abstract void loadFromFile(String path, byte[] bytes, ActionCompletedCallback callback, ActionCompletedCallback errorCallback);
+
         public abstract void cancel(ActionCompletedCallback callback);
 
         @FunctionalInterface
@@ -138,6 +202,11 @@ public class URLToolbar implements UIComponent {
 
                     callback.callback();
                 }).start();
+            }
+
+            @Override
+            public void loadFromFile(String path, byte[] bytes, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
+
             }
 
             @Override

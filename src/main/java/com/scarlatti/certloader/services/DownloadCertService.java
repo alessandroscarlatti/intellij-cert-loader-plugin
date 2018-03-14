@@ -19,10 +19,14 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 import java.security.MessageDigest;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,6 +48,18 @@ public class DownloadCertService {
         this.sslContext = sslContext;
         this.trustManager = trustManager;
         this.keyStore = keyStore;
+    }
+
+    public static List<X509Certificate> downloadCertsFromFile(byte[] bytes) {
+        try {
+            return Collections.singletonList(
+                (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(
+                    new ByteArrayInputStream(bytes)
+                ));
+        } catch (CertificateException e) {
+            throw new RuntimeException("Error loading certificates from file.", e);
+        }
+
     }
 
     public static List<X509Certificate> downloadCerts(String url) {

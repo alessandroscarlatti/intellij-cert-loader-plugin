@@ -12,7 +12,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +44,8 @@ public class CertList implements UIComponent {
     private boolean enabled = true;
     private boolean installEnabled = false;
 
+    private boolean isLocalUrl;
+
     public CertList() {
         setupTable();
         setupTitle("www.google.com");
@@ -68,7 +73,12 @@ public class CertList implements UIComponent {
     private void setupTitle(String url) {
         // parse the text for the url
         // needs to start with https://
-        url = formatUrl(url);
+
+        isLocalUrl = url.startsWith("//") || url.startsWith("\\\\") || url.startsWith("C:");
+
+        if (!isLocalUrl) {
+            url = formatUrl(url);
+        }
 
         urlLink.setText("<html><u>" + url + "</u></html>");
 
@@ -80,7 +90,14 @@ public class CertList implements UIComponent {
         url = url.trim();
 
         //first trim off any http:// or https://
-        if (!url.startsWith("https://")) url = "https://" + url;
+        if (!url.startsWith("https://")) {
+
+            if (url.startsWith("http://")) {
+                url = url.replaceFirst("http://", "");
+            }
+
+            url = "https://" + url;
+        }
 
         return url;
     }
@@ -144,6 +161,11 @@ public class CertList implements UIComponent {
                     Desktop.getDesktop().browse(new URI(url));
                 } catch (Exception exc) {
                     exc.printStackTrace();
+                    try {
+                        Desktop.getDesktop().open(new File(url).getParentFile());
+                    } catch (Exception exc2) {
+                        exc2.printStackTrace();
+                    }
                 }
             }
         });
