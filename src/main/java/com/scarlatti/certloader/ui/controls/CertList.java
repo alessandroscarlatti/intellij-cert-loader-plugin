@@ -4,8 +4,6 @@ import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.Cert;
 
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
@@ -13,12 +11,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +44,8 @@ public class CertList implements UIComponent {
     private boolean enabled = true;
     private boolean installEnabled = false;
 
+    private boolean isLocalUrl;
+
     public CertList() {
         setupTable();
         setupTitle("www.google.com");
@@ -60,21 +59,50 @@ public class CertList implements UIComponent {
         setupButtons();
     }
 
-    public CertList(String url, List<Cert> certs, InstallCallback installCallback) {
+    public void init(String url, List<Cert> certs) {
         setupTable();
         setupTitle(url);
         addCerts(certs);
-        setupButtons();
-        installCallback = this.installCallback;
+    }
+
+    public void init(String url, List<Cert> certs, InstallCallback installCallback) {
+        init(url, certs);
+        this.installCallback = installCallback;
     }
 
     private void setupTitle(String url) {
-        this.url = url;
+        // parse the text for the url
+        // needs to start with https://
+
+        isLocalUrl = url.startsWith("//") || url.startsWith("\\\\") || url.startsWith("C:");
+
+        if (!isLocalUrl) {
+            url = formatUrl(url);
+        }
+
         urlLink.setText("<html><u>" + url + "</u></html>");
+
+        this.url = url;
+    }
+
+    public static String formatUrl(String url) {
+        // trim white space
+        url = url.trim();
+
+        //first trim off any http:// or https://
+        if (!url.startsWith("https://")) {
+
+            if (url.startsWith("http://")) {
+                url = url.replaceFirst("http://", "");
+            }
+
+            url = "https://" + url;
+        }
+
+        return url;
     }
 
     private void setupTable() {
-
         model = new DefaultTableModel(0, 3) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -105,6 +133,7 @@ public class CertList implements UIComponent {
             }
 
         }.init();  // not sure why the default constructor causes an intellij exception?!?
+
         table.setModel(model);
 
         TableColumnModel columnModel = new DefaultTableColumnModel();
@@ -114,6 +143,7 @@ public class CertList implements UIComponent {
         columnModel.getColumn(0).setMaxWidth(50);
         columnModel.getColumn(1).setHeaderValue("Certificate");
 
+        table.setColumnModel(new DefaultTableColumnModel());
         table.setColumnModel(columnModel);
         table.putClientProperty("terminateEditOnFocusLost", true);
     }
@@ -131,6 +161,11 @@ public class CertList implements UIComponent {
                     Desktop.getDesktop().browse(new URI(url));
                 } catch (Exception exc) {
                     exc.printStackTrace();
+                    try {
+                        Desktop.getDesktop().open(new File(url).getParentFile());
+                    } catch (Exception exc2) {
+                        exc2.printStackTrace();
+                    }
                 }
             }
         });
@@ -192,11 +227,8 @@ public class CertList implements UIComponent {
         this.enabled = enabled;
     }
 
-    public void clear() {
-
-    }
-
     public void addCerts(List<Cert> certs) {
+        this.certs.clear();
         for (Cert cert : certs) {
             addCert(cert);
         }
@@ -233,6 +265,10 @@ public class CertList implements UIComponent {
         return table;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     @FunctionalInterface
     public interface InstallCallback {
         void installCerts(List<Cert> certs);
@@ -242,5 +278,13 @@ public class CertList implements UIComponent {
         return (List<Cert> certs) -> {
             System.out.println(certs);
         };
+    }
+
+    public InstallCallback getInstallCallback() {
+        return installCallback;
+    }
+
+    public void setInstallCallback(InstallCallback installCallback) {
+        this.installCallback = installCallback;
     }
 }

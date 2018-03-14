@@ -1,5 +1,7 @@
 package com.scarlatti.certloader.ui.model;
 
+import java.io.Serializable;
+
 /**
  * ______    __                         __           ____             __     __  __  _
  * ___/ _ | / /__ ___ ___ ___ ____  ___/ /______    / __/______ _____/ /__ _/ /_/ /_(_)
@@ -7,8 +9,8 @@ package com.scarlatti.certloader.ui.model;
  * /_/ |_/_/\__/___/___/\_,_/_//_/\_,_/_/  \___/ /___/\__/\_,_/_/ /_/\_,_/\__/\__/_/
  * Monday, 2/12/2018
  */
-public class KeyStore {
-    private boolean selected;
+public class KeyStore implements Serializable {
+    private transient boolean selected;
     private String name;
     private String path;
     private String password;

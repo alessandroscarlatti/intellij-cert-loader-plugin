@@ -9,7 +9,7 @@
  */
 package com.scarlatti.certloader.ui;
 
-import com.scarlatti.certloader.utils.WindowsFileChooser;
+import com.scarlatti.certloader.ui.controls.filechooser.WindowsFileChooser;
 import com.sun.jna.Platform;
 
 import javax.swing.*;

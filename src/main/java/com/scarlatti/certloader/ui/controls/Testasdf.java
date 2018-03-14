@@ -1,6 +1,11 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class Testasdf extends JDialog {
@@ -57,4 +62,5 @@ public class Testasdf extends JDialog {
         dialog.setVisible(true);
         System.exit(0);
     }
+
 }

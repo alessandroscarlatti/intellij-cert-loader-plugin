@@ -1,13 +1,12 @@
 package com.scarlatti.certloader.ui.controls;
 
 import com.scarlatti.certloader.ui.UIComponent;
+import com.scarlatti.certloader.ui.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import static java.awt.Cursor.HAND_CURSOR;
 
@@ -22,42 +21,51 @@ public class CertLoadingError implements UIComponent {
     private JPanel jPanel;
     private JLabel detailsLink;
 
-    private JComponent jsp;  // this is the exception content
+    private JComponent exceptionViewer;  // this is the exception content
+    private String errorTitle;
 
-    public CertLoadingError(String title, Exception e) {
-        jsp = buildExceptionViewer(e);
-        addListeners(title);
+    public CertLoadingError() {
+        addListeners();
     }
 
-    private void addListeners(String errorTitle) {
+    public void init(String title, Exception e) {
+        exceptionViewer = Utils.buildExceptionViewer(e);
+        errorTitle = title;
+    }
+
+    private void addListeners() {
         detailsLink.setCursor(new Cursor(HAND_CURSOR));
         detailsLink.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JOptionPane.showMessageDialog(
-                    null, jsp, errorTitle, JOptionPane.ERROR_MESSAGE);
+                    SwingUtilities.getWindowAncestor(jPanel), exceptionViewer, errorTitle, JOptionPane.ERROR_MESSAGE);
             }
         });
-    }
-
-    private JComponent buildExceptionViewer(Exception e) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append(e.getMessage());
-        sb.append("\n");
-        StringWriter errors = new StringWriter();
-        e.printStackTrace(new PrintWriter(errors));
-        sb.append(errors.toString());
-        JTextArea jta = new JTextArea(sb.toString());
-        return new JScrollPane(jta){
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(480, 320);
-            }
-        };
     }
 
     @Override
     public JPanel getJPanel() {
         return jPanel;
     }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+    }
+
 }

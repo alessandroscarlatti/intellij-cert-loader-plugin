@@ -1,11 +1,9 @@
 package com.scarlatti.certloader.ui;
 
 import com.scarlatti.certloader.ui.controls.CertList;
-import com.scarlatti.certloader.ui.controls.URLToolbar;
 import com.scarlatti.certloader.ui.model.Cert;
 import org.junit.Test;
 
-import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,14 +18,14 @@ public class CertListTest {
 
     @Test
     public void displayCertList() {
-        TestUtils.DisplayJPanel(() ->
+        TestUtils.displayJPanel(() ->
             new CertList().getJPanel()
         );
     }
 
     @Test
     public void displayCertListWithData() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             CertList certList = new CertList();
             certList.addCert(Data.Certs.sample1());
             certList.addCert(Data.Certs.sample2());
@@ -40,7 +38,7 @@ public class CertListTest {
 
     @Test
     public void displayCertListWithDataAndURL() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
 
             List<Cert> certs = Arrays.asList(
                 Data.Certs.sample1(),
@@ -65,7 +63,7 @@ public class CertListTest {
             Data.Certs.sample4()
         );
 
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
 
             CertList certList = new CertList("www.google.com", certs);
             certList.setEnabled(false);

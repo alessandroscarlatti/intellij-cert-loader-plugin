@@ -8,14 +8,16 @@ plugins {
     id "org.jetbrains.intellij" version "0.2.17"
 }
 
+apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
-apply plugin: 'java'
+
+def certLoaderPluginName = 'CertLoader'
 
 intellij {
     localPath 'C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2017.2.5'
     plugins 'coverage' //Bundled plugin dependencies
-    pluginName 'plugin_name_goes_here'
+    pluginName certLoaderPluginName
 }
 
 repositories {
@@ -26,7 +28,15 @@ dependencies {
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.0'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.fasterxml.jackson.core', name: "jackson-databind", version: "2.9.4"
+//    compile 'com.github.dyorgio.runtime:out-process:1.0.0'
 }
 
-group 'org.jetbrains'
-version '1.2' // Plugin version
+group 'com.scarlatti'
+version '2.2.0' // Plugin version
+
+task copyDistribution(type: Copy) {
+    from "build/distributions/${certLoaderPluginName}-${version}.zip"
+    into "distr"
+}
+
+buildPlugin.finalizedBy copyDistribution

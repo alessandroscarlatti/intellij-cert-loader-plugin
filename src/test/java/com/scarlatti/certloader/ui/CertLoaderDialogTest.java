@@ -1,6 +1,7 @@
 package com.scarlatti.certloader.ui;
 
-import com.scarlatti.certloader.plugin.LoadAction;
+import com.scarlatti.certloader.services.InstallCertService;
+import com.scarlatti.certloader.services.LoadCertService;
 import com.scarlatti.certloader.ui.controls.CertList;
 import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
 import com.scarlatti.certloader.ui.controls.URLToolbar;
@@ -21,7 +22,7 @@ public class CertLoaderDialogTest {
 
     @Test
     public void displayDialog() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
 
             List<Cert> certs = Arrays.asList(
                 CertListTest.Data.Certs.sample1(),
@@ -58,10 +59,15 @@ public class CertLoaderDialogTest {
                 }
 
                 @Override
+                public void loadFromFile(String path, byte[] bytes, ActionCompletedCallback callback, ActionCompletedCallback errorCallback) {
+
+                }
+
+                @Override
                 public void cancel(ActionCompletedCallback callback) {
                     // cancel loading here...
                     loadingThread.interrupt();
-                    certLoaderDialog.getCertListWrapper().hidden();
+                    certLoaderDialog.getCertListWrapper().welcome();
                     callback.callback();
                 }
             });
@@ -72,13 +78,28 @@ public class CertLoaderDialogTest {
 
     @Test
     public void testDownloadCerts() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             CertLoaderDialog certLoaderDialog = new CertLoaderDialog();
+            certLoaderDialog.getJPanel().revalidate();
             certLoaderDialog.getUrlToolbar().setLoadAction(
-                new LoadAction(certLoaderDialog.getCertListWrapper())
+                new LoadCertService(certLoaderDialog.getCertListWrapper())
             );
+
+            certLoaderDialog.getCertListWrapper().getCertList().setInstallCallback(certs -> {
+                new InstallCertService(certLoaderDialog.getJPanel()).install(certs, certLoaderDialog.getAppManager().getListKeyStores().getCheckedKeyStores());
+            });
 
             return certLoaderDialog.getJPanel();
         });
     }
+
+//    public void revalidateContainer(Container container) {
+//        for (Component c : container.getComponents()) {
+//            if (c instanceof Container) {
+//                revalidateContainer((Container) c);
+//            }
+//        }
+//
+//        container.revalidate();
+//    }
 }

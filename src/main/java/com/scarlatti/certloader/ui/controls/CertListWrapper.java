@@ -1,5 +1,7 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.model.Cert;
 
@@ -17,14 +19,18 @@ import java.util.List;
 public class CertListWrapper implements UIComponent {
     private JPanel jPanel;
     private CertListLoadingProgress progressBar;
+    private CertLoadingError errorMessage;
+    private CertList certList;
+    private WelcomeMessage welcomeMessage;
+    private CardLayout layout;
 
     public CertListWrapper() {
-        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
+        layout = (CardLayout) jPanel.getLayout();
+        layout.show(jPanel, "welcomeMessage");
     }
 
-    public void hidden() {
-        jPanel.removeAll();
-        jPanel.revalidate();
+    public void welcome() {
+        layout.show(jPanel, "welcomeMessage");
     }
 
     /**
@@ -32,12 +38,9 @@ public class CertListWrapper implements UIComponent {
      * Utilize callbacks to alert when progress complete.
      */
     public void loading(Runnable onTimeout) {
-        jPanel.removeAll();
-        progressBar = new CertListLoadingProgress();
-        jPanel.add(progressBar.getJPanel());
-        jPanel.revalidate();
+        layout.show(jPanel, "progressBar");
 
-        progressBar.load(1000, onTimeout);
+        progressBar.load(10000, onTimeout);
     }
 
     public void stopLoading() {
@@ -47,21 +50,51 @@ public class CertListWrapper implements UIComponent {
     /**
      * Select certs to install.
      */
+    public void listCerts(String url, List<Cert> certs) {
+        certList.init(url, certs);
+        layout.show(jPanel, "certList");
+    }
+
     public void listCerts(String url, List<Cert> certs, CertList.InstallCallback installCallback) {
-        jPanel.removeAll();
-        jPanel.add(new CertList(url, certs, installCallback).getJPanel());
-        jPanel.setPreferredSize(new Dimension(jPanel.getParent().getWidth(), 300));
-        jPanel.revalidate();
+        certList.init(url, certs);
+        layout.show(jPanel, "certList");
     }
 
     public void error(String url, Exception e) {
-        jPanel.removeAll();
-        jPanel.add(new CertLoadingError("Error Connecting to <" + url + ">", e).getJPanel());
-        jPanel.revalidate();
+        layout.show(jPanel, "errorMessage");
+        errorMessage.init("Error Connecting to <" + url + ">", e);
     }
 
     @Override
     public JPanel getJPanel() {
         return jPanel;
     }
+
+    public CertList getCertList() {
+        return certList;
+    }
+
+    public void setCertList(CertList certList) {
+        this.certList = certList;
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+    }
+
 }

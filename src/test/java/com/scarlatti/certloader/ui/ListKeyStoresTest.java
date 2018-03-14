@@ -19,7 +19,7 @@ public class ListKeyStoresTest {
 
     @Test
     public void displayDialogInTest() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             ListKeyStores listKeyStores = new ListKeyStores(Data.keyStores(), Collections.singletonList("test"));
             return listKeyStores.getJPanel();
         });
@@ -27,7 +27,7 @@ public class ListKeyStoresTest {
 
     @Test
     public void displayDialogInProd() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             ListKeyStores listKeyStores = new ListKeyStores(Data.keyStores());
             return listKeyStores.getJPanel();
         });
@@ -35,7 +35,7 @@ public class ListKeyStoresTest {
 
     @Test
     public void displayDialogDisabled() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             ListKeyStores listKeyStores = new ListKeyStores(Data.keyStores());
             listKeyStores.disabledMode();
             return listKeyStores.getJPanel();
