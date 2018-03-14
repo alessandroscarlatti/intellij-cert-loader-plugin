@@ -2,10 +2,13 @@ package com.scarlatti.certloader.services;
 
 import com.scarlatti.certloader.ui.model.KeyStore;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -18,12 +21,50 @@ public class DefaultKeyStoreService {
 
     /**
      * Try to find the default JDK key stores on this machine.
-     *
+     * <p>
      * Will search in the java home directory
      *
      * @return list of default key stores
      */
     public static List<KeyStore> getDefaultKeyStores() {
+
+        JOptionPane opt = new JOptionPane("Searching for key stores...", JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}); // no buttons
+        final JDialog dlg = opt.createDialog("Loading");
+
+        new Thread(() -> {
+            try {
+                dlg.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+
+
+//        CountDownLatch latch = new CountDownLatch(1);
+//
+//        AtomicReference<List<KeyStore>> keyStores = new AtomicReference<>();
+
+//        new Thread(() -> {
+//            keyStores.set(doGetDefaultKeyStores());
+//            dlg.dispose();
+//            latch.countDown();
+//        });
+//
+//        try {
+//            latch.await();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        List<KeyStore> keyStores = doGetDefaultKeyStores();
+
+        dlg.dispose();
+
+        return keyStores;
+    }
+
+    public static List<KeyStore> doGetDefaultKeyStores() {
 
         String javaHome = System.getProperty("java.home");
 
@@ -46,7 +87,7 @@ public class DefaultKeyStoreService {
             Files.walkFileTree(searchStartPath, new HashSet<>(Collections.singletonList(FileVisitOption.FOLLOW_LINKS)),
                     Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                         @Override
-                        public FileVisitResult visitFile(Path path , BasicFileAttributes attrs) throws IOException {
+                        public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
 
                             if (path.getFileName().toString().equals("cacerts")) {
                                 System.out.printf("Visiting file %s\n", path);
@@ -57,14 +98,14 @@ public class DefaultKeyStoreService {
                         }
 
                         @Override
-                        public FileVisitResult visitFileFailed(Path file , IOException e) throws IOException {
+                        public FileVisitResult visitFileFailed(Path file, IOException e) throws IOException {
                             System.err.printf("Visiting failed for %s\n", file);
 
                             return FileVisitResult.SKIP_SUBTREE;
                         }
 
                         @Override
-                        public FileVisitResult preVisitDirectory(Path dir , BasicFileAttributes attrs) throws IOException {
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                             System.out.printf("About to visit directory %s\n", dir);
                             return FileVisitResult.CONTINUE;
                         }
@@ -85,10 +126,10 @@ public class DefaultKeyStoreService {
 
             if (keyStoreName.startsWith("jdk")) {
                 keyStores.add(new KeyStore(
-                    true,
-                    keyStoreName,
-                    path,
-                    "changeit"
+                        true,
+                        keyStoreName,
+                        path,
+                        "changeit"
                 ));
             }
         }
