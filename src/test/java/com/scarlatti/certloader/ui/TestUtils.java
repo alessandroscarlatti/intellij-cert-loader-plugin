@@ -17,15 +17,22 @@ import java.util.concurrent.CountDownLatch;
  */
 public class TestUtils {
 
-    public static void DisplayJPanel(JPanelProvider jPanelProvider) {
+    public static void displayJPanel(JPanelProvider jPanelProvider, JPanelDisplayedCallback... jPanelDisplayedCallbacks) {
 
         setDarculaLaf();
 
         JFrame frame = new JFrame("JPanel Wrapper");
-        frame.setContentPane(jPanelProvider.provideJPanel());
+        JPanel jPanel = jPanelProvider.provideJPanel();
+
+
+        frame.setContentPane(jPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+
+        if (jPanelDisplayedCallbacks.length > 0) {
+            jPanelDisplayedCallbacks[0].callback(jPanel);
+        }
 
         CountDownLatch latch = new CountDownLatch(1);
         frame.addWindowListener(new WindowAdapter() {
@@ -56,5 +63,10 @@ public class TestUtils {
     @FunctionalInterface
     public interface JPanelProvider {
         JPanel provideJPanel();
+    }
+
+    @FunctionalInterface
+    public interface JPanelDisplayedCallback {
+        void callback(JPanel jPanel);
     }
 }

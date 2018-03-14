@@ -14,7 +14,7 @@ public class CertLoaderDialogOldTest {
 
     @Test
     public void displayDialog() {
-        TestUtils.DisplayJPanel(() ->
+        TestUtils.displayJPanel(() ->
             new CertLoaderDialogOld().getCertLoaderDialog()
         );
     }

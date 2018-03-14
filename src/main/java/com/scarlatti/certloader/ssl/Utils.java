@@ -1,6 +1,6 @@
 package com.scarlatti.certloader.ssl;
 
-import com.scarlatti.certloader.plugin.ProcessAbortedException;
+import com.scarlatti.certloader.exceptions.ProcessAbortedException;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;

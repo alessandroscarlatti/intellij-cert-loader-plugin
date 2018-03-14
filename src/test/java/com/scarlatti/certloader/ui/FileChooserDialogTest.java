@@ -1,7 +1,6 @@
 package com.scarlatti.certloader.ui;
 
-import com.scarlatti.certloader.utils.WindowsFileChooser;
-import oracle.jrockit.jfr.JFR;
+import com.scarlatti.certloader.ui.controls.filechooser.WindowsFileChooser;
 import org.junit.Test;
 
 import javax.swing.*;

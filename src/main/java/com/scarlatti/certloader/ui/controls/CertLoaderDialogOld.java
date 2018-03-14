@@ -1,9 +1,10 @@
 package com.scarlatti.certloader.ui.controls;
 
-import com.scarlatti.certloader.plugin.CertInstaller;
+import com.scarlatti.certloader.plugin.CertInstallerOld;
 import com.scarlatti.certloader.ui.UIComponent;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * ~     _____                                    __
@@ -39,7 +40,7 @@ public class CertLoaderDialogOld implements UIComponent {
         getCertsButton.addActionListener((e -> {
             try {
                 new Thread(() -> {
-                    CertInstaller.installCert();
+                    CertInstallerOld.installCert();
                 }).start();
 
             } catch (Exception e1) {
@@ -76,4 +77,24 @@ public class CertLoaderDialogOld implements UIComponent {
     public JPanel getJPanel() {
         return certLoaderDialog;
     }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+    }
+
 }

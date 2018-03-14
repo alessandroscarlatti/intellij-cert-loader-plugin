@@ -19,7 +19,7 @@ public class CertListWrapperTest {
 
     @Test
     public void displayLoading() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             CertListWrapper wrapper = new CertListWrapper();
 
             wrapper.loading(() -> {
@@ -32,7 +32,7 @@ public class CertListWrapperTest {
 
     @Test
     public void displayCertList() {
-        TestUtils.DisplayJPanel(() -> {
+        TestUtils.displayJPanel(() -> {
             CertListWrapper wrapper = new CertListWrapper();
 
             List<Cert> certs = Arrays.asList(

@@ -1,0 +1,30 @@
+<project name="customcompiler" default="customcompile">
+    <property name="idea.home" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2017.2.5"/>
+    <path id="compile.classpath">
+
+        <fileset dir="${idea.home}/redist">
+            <include name="annotations.jar"/>
+            <include name="forms_rt.jar"/>
+            <include name="javac2.jar"/>
+        </fileset>
+
+    </path>
+    <path id="classpath.uidesigner">
+        <fileset dir="${idea.home}">
+            <include name="lib/*.jar"/>
+            <include name="redist/*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef name="javac2"
+             classname="com.intellij.ant.Javac2"
+             classpathref="classpath.uidesigner"/>
+
+    <target name="customcompile">
+        <mkdir dir="build/classes/main"/>
+        <javac2 srcdir="./src" destdir="build/classes/main" classpathref="compile.classpath">
+        </javac2>
+
+    </target>
+
+</project>

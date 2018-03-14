@@ -14,7 +14,7 @@ public class URLToolbarTest {
 
     @Test
     public void displayToolbar() {
-        TestUtils.DisplayJPanel(() ->
+        TestUtils.displayJPanel(() ->
             new URLToolbar().getJPanel()
         );
     }

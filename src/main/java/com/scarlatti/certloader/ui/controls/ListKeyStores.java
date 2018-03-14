@@ -1,12 +1,12 @@
 package com.scarlatti.certloader.ui.controls;
 
+import com.scarlatti.certloader.services.DefaultKeyStoreService;
 import com.scarlatti.certloader.ui.UIComponent;
+import com.scarlatti.certloader.ui.Utils;
 import com.scarlatti.certloader.ui.model.KeyStore;
 import com.scarlatti.certloader.ui.model.ValueProvider;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -201,7 +201,8 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
             removeAllKeyStores();
             addKeyStores(defaultKeyStores);
         } catch (Exception exc) {
-            exc.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    SwingUtilities.getWindowAncestor(jPanel), Utils.buildExceptionViewer(exc), "Error Getting Default Key Stores", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -345,12 +346,31 @@ public class ListKeyStores implements UIComponent, ValueProvider<List<KeyStore>>
 
     // TODO later call the real service
     public List<KeyStore> getDefaultKeyStores() {
-        return Data.keyStores();
+        return DefaultKeyStoreService.getDefaultKeyStores();
     }
 
     @Override
     public JPanel getJPanel() {
         return jPanel;
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     private static class TableModelKeyStoreWrapper {
