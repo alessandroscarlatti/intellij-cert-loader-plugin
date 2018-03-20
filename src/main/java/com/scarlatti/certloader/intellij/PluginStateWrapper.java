@@ -24,7 +24,11 @@ import org.jetbrains.annotations.Nullable;
 })
 public class PluginStateWrapper implements PersistentStateComponent<AppState> {
 
-    private AppState state = AppState.defaultState();
+    private AppState state;
+
+    public PluginStateWrapper() {
+        this.state = AppState.defaultState();
+    }
 
     @Nullable
     @Override
@@ -34,6 +38,10 @@ public class PluginStateWrapper implements PersistentStateComponent<AppState> {
 
     @Override
     public void loadState(final AppState state) {
+        this.state = state;
+    }
+
+    public void setState(AppState state) {
         this.state = state;
     }
 }

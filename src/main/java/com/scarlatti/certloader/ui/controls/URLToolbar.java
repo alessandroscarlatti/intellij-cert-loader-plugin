@@ -57,7 +57,10 @@ public class URLToolbar implements UIComponent {
     private void doChooseFile(ActionEvent event) {
         if (!loading) {
             String filePath = chooseFile();
-            loadFile(filePath);
+
+            if (filePath != null) {
+                loadFile(filePath);
+            }
         }
     }
 

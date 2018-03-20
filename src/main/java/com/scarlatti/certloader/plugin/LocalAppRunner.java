@@ -8,6 +8,13 @@ import com.scarlatti.certloader.services.LoadCertService;
 import com.scarlatti.certloader.ui.Utils;
 import com.scarlatti.certloader.ui.controls.CertLoaderDialog;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * ______    __                         __           ____             __     __  __  _
  * ___/ _ | / /__ ___ ___ ___ ____  ___/ /______    / __/______ _____/ /__ _/ /_/ /_(_)
@@ -50,8 +57,21 @@ public class LocalAppRunner implements Runnable {
             new InstallCertService(certLoaderDialog.getJPanel()).install(certs, certLoaderDialog.getAppManager().getListKeyStores().getCheckedKeyStores());
         });
 
-        Utils.displayJPanel(certLoaderDialog::getJPanel);
+        Utils.displayJPanel(certLoaderDialog::getJPanel, this::setupIcons);
 
         certLoaderDialog.saveOnClose();
+    }
+
+    private void setupIcons(JPanel jPanel) {
+
+        try {
+            List<Image> icons = new ArrayList<>();
+            icons.add(ImageIO.read(this.getClass().getResource("/key32.png")));
+            icons.add(ImageIO.read(this.getClass().getResource("/key48.png")));
+
+            SwingUtilities.getWindowAncestor(jPanel).setIconImages(icons);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

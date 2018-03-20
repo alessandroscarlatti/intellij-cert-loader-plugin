@@ -1,6 +1,6 @@
 package com.scarlatti.certloader.ui;
 
-import com.intellij.ide.ui.laf.darcula.DarculaLaf;
+import com.bulenkov.darcula.DarculaLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +23,7 @@ public class Utils {
 
         setDarculaLaf();
 
-        JFrame frame = new JFrame("JPanel Wrapper");
+        JFrame frame = new JFrame("Install SSL Certificate(s) - CertLoader 2.3.0");
         JPanel jPanel = jPanelProvider.provideJPanel();
 
 

@@ -2,6 +2,8 @@ package com.scarlatti.certloader.plugin;
 
 import com.scarlatti.certloader.ui.model.KeyStore;
 
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class AppState {
     private String mostRecentUrl;
     private List<KeyStore> keyStores;
+    private String settingsFile;
 
     public static AppState defaultState() {
         AppState appState = new AppState();
@@ -22,6 +25,11 @@ public class AppState {
         appState.keyStores = Defaults.keyStores();
 
         return appState;
+    }
+
+    public AppState() {
+        keyStores = new ArrayList<>();
+        settingsFile = Paths.get(System.getProperty("user.home"), ".certloader.settings.json").toString();
     }
 
     private static class Defaults {
@@ -78,5 +86,13 @@ public class AppState {
 
     public void setKeyStores(List<KeyStore> keyStores) {
         this.keyStores = keyStores;
+    }
+
+    public String getSettingsFile() {
+        return settingsFile;
+    }
+
+    public void setSettingsFile(String settingsFile) {
+        this.settingsFile = settingsFile;
     }
 }

@@ -11,6 +11,8 @@ import com.scarlatti.certloader.services.LocalRepository;
 import com.scarlatti.certloader.services.Repository;
 import com.scarlatti.certloader.ui.Utils;
 
+import java.nio.file.Paths;
+
 /**
  * ______    __                         __           ____             __     __  __  _
  * ___/ _ | / /__ ___ ___ ___ ____  ___/ /______    / __/______ _____/ /__ _/ /_/ /_(_)
@@ -28,7 +30,7 @@ public class LocalConfig extends AbstractModule {
     @Singleton
     @Named("localSettingsFile")
     public String localSettingsFile() {
-        return "C:\\Users\\pc\\IdeaProjects\\intellij-cert-loader-plugin-2\\settings.json";
+        return Paths.get(System.getProperty("user.home"), ".CertLoader", "settings.json").toString();
     }
 
     @Provides

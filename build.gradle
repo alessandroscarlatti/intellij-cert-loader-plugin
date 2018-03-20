@@ -1,6 +1,13 @@
+import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
+
 buildscript {
     repositories {
+        jcenter()
         mavenCentral()
+    }
+
+    dependencies {
+        classpath 'edu.sc.seis.gradle:launch4j:2.4.2'
     }
 }
 
@@ -11,32 +18,58 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'edu.sc.seis.launch4j'
 
 def certLoaderPluginName = 'CertLoader'
 
 intellij {
-    localPath 'C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2017.2.5'
-    plugins 'coverage' //Bundled plugin dependencies
+//    localPath 'C:/Program Files/JetBrains/IntelliJ IDEA Community Edition 2017.2.5'
+    localPath 'C:\\Program Files (x86)\\JetBrains\\IntelliJ IDEA Community Edition 2016.3.4'
+    updateSinceUntilBuild = false
     pluginName certLoaderPluginName
 }
 
 repositories {
     mavenCentral()
+    flatDir dirs: project.projectDir
 }
 
 dependencies {
+    compile group: 'com.bulenkov', name: 'darcula'
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.0'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.fasterxml.jackson.core', name: "jackson-databind", version: "2.9.4"
-//    compile 'com.github.dyorgio.runtime:out-process:1.0.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    compile group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
 }
 
 group 'com.scarlatti'
-version '2.2.0' // Plugin version
+version '2.3.0' // Plugin version
 
 task copyDistribution(type: Copy) {
     from "build/distributions/${certLoaderPluginName}-${version}.zip"
     into "distr"
 }
 
+task guiExe(type: Launch4jLibraryTask, group: 'build') {
+    outputDir = "/launch4j/CertLoader"
+    outfile = "certloader.exe"
+    mainClassName = 'com.scarlatti.certloader.App'
+    icon = '../../resources/main/key2.ico'  // point to the folder within the build resources
+    headerType = "gui"
+    companyName = "Scarlatti"
+    manifest = "../../resources/main/application.manifest"
+}
+
 buildPlugin.finalizedBy copyDistribution
+buildPlugin.finalizedBy guiExe
+
+task release(type: Zip, group: 'build') {
+
+    from files('/build/launch4j')
+    archiveName "CertLoader-${version}.zip"
+    destinationDir(file('/release/bin'))
+
+}
+
+guiExe.finalizedBy release

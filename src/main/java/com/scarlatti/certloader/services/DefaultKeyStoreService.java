@@ -31,13 +31,13 @@ public class DefaultKeyStoreService {
         JOptionPane opt = new JOptionPane("Searching for key stores...", JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}); // no buttons
         final JDialog dlg = opt.createDialog("Loading");
 
-        new Thread(() -> {
+        SwingUtilities.invokeLater(() -> {
             try {
                 dlg.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
 
 
 
@@ -59,7 +59,7 @@ public class DefaultKeyStoreService {
 
         List<KeyStore> keyStores = doGetDefaultKeyStores();
 
-        dlg.dispose();
+        SwingUtilities.invokeLater(dlg::dispose);
 
         return keyStores;
     }

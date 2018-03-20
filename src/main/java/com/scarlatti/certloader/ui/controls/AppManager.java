@@ -19,6 +19,7 @@ public class AppManager implements UIComponent {
     private JPanel jPanel;
     private ListKeyStores listKeyStores;
     private TextAreaLogger textAreaLogger;
+    private AppSettings settings;
 
     @Override
     public JPanel getJPanel() {
@@ -36,4 +37,14 @@ public class AppManager implements UIComponent {
     public TextAreaLogger getTextAreaLogger() {
         return textAreaLogger;
     }
+
+    public AppSettings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(AppSettings settings) {
+        this.settings = settings;
+    }
+
+
 }

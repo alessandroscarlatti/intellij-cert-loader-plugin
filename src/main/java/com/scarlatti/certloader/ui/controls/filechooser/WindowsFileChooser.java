@@ -336,7 +336,7 @@ public class WindowsFileChooser
 
 	public WindowsFileChooser withInitialFile(String initialFile) {
 
-		if (Files.exists(Paths.get(initialFile))) {
+		if (new File(initialFile).exists()) {
 			this.initialFile = initialFile.replace("/", "\\");
 		}
 

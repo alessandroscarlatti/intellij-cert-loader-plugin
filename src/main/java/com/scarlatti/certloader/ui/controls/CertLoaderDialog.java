@@ -1,6 +1,7 @@
 package com.scarlatti.certloader.ui.controls;
 
 import com.google.inject.Inject;
+import com.scarlatti.certloader.App;
 import com.scarlatti.certloader.plugin.AppState;
 import com.scarlatti.certloader.services.DefaultKeyStoreService;
 import com.scarlatti.certloader.services.LoadCertService;
@@ -9,10 +10,13 @@ import com.scarlatti.certloader.ui.UIComponent;
 import com.scarlatti.certloader.ui.Utils;
 import com.scarlatti.certloader.ui.model.KeyStore;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +58,10 @@ public class CertLoaderDialog implements UIComponent {
         if (appState != null) {
             if (appState.getKeyStores() != null) {
                 appManager.getListKeyStores().setCurrent(getInitialKeyStores());
+            }
+
+            if (appState.getSettingsFile() != null) {
+                appManager.getSettings().getSettingsFileText().setText(appState.getSettingsFile());
             }
 
             if (appState.getMostRecentUrl() != null) {
