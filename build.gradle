@@ -44,7 +44,7 @@ dependencies {
 }
 
 group 'com.scarlatti'
-version '2.3.1' // Plugin version
+version '3.0.0' // Plugin version
 
 task copyDistribution(type: Copy) {
     from "build/distributions/${certLoaderPluginName}-${version}.zip"
@@ -112,7 +112,7 @@ task executableJarRelease(type: Zip, group: 'build') {
     dependsOn runnableJar
     println runnableJar.outputs.files.singleFile
     from runnableJar.outputs.files.singleFile
-    from file ("CertLoader-${version}-ExecutableJar.bat")
+    from file("CertLoader.bat")
     archiveName "CertLoader-${version}-ExecutableJar.zip"
     destinationDir(file('/release/bin'))
 }

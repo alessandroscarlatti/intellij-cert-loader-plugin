@@ -23,7 +23,7 @@ public class Utils {
 
         setDarculaLaf();
 
-        JFrame frame = new JFrame("Install SSL Certificate(s) - CertLoader 2.3.0");
+        JFrame frame = new JFrame("Install SSL Certificate(s) - CertLoader 3.0.0");
         JPanel jPanel = jPanelProvider.provideJPanel();
 
 

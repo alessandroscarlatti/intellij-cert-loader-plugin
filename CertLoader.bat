@@ -4,4 +4,4 @@
 @rem #####################################################
 @rem Run the CertLoader application
 @rem #####################################################
-java -jar CertLoader2.3.1.jar
+java -jar CertLoader3.0.0.jar
