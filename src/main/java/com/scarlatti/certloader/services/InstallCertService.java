@@ -12,10 +12,14 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import static com.scarlatti.certloader.services.CertLoaderUtils.resourceStr;
+import static java.lang.String.format;
 
 /**
  * ______    __                         __           ____             __     __  __  _
@@ -27,6 +31,7 @@ import java.util.List;
 public class InstallCertService implements Serializable {
 
     private transient JPanel parent;
+    private transient Path workingDir = Paths.get(System.getProperty("user.home"), ".CertLoader");
 
     public InstallCertService(JPanel parent) {
         this.parent = parent;
@@ -43,6 +48,7 @@ public class InstallCertService implements Serializable {
 
             if (keyStores.size() > 0) {
                 try {
+                    installWithBat(certs, keyStores);
                     installAsCurrentUser(certs, keyStores);
                 } catch (AccessDeniedException e) {
                     installAsRoot(certs, keyStores);
@@ -61,6 +67,43 @@ public class InstallCertService implements Serializable {
                 parent , buildExceptionViewer(e), "Error installing certificate(s)", JOptionPane.ERROR_MESSAGE);
         }
 
+    }
+
+    /**
+     * Save the certs as files, and generate a bat file installer.
+     * @param certs the certs to install
+     * @param keyStores the key stores to install the certs into
+     */
+    private void installWithBat(List<Cert> certs, List<KeyStore> keyStores) {
+        StringBuilder sbInstallScript = new StringBuilder(resourceStr("/InstallCerts.template.bat"));
+
+        String strTimestamp = new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS").format(new Date());
+        Path installDir = workingDir.resolve("CertLoader-" + strTimestamp);
+
+        for (KeyStore keyStore : keyStores) {
+            StringBuilder sbKeyStoreScript = new StringBuilder(resourceStr("/InstallCert.template.bat"));
+            StringBuilder sbCertsList = new StringBuilder();
+            sbKeyStoreScript.append("\n");
+            for (int i = 0; i < certs.size(); i++) {
+                Cert cert = certs.get(i);
+                String alias = getAlias(cert, i);
+                String fileName = alias.replace("https://", "").replace("/", ".").replace(":", ".");
+                Path certFile = installDir.resolve(fileName);
+                sbCertsList.append("@rem - " + cert.getUrl() + "\n");
+                sbKeyStoreScript.append(format("\"%%KEYTOOL%%\" -import -alias \"%s\" -file \"%s\" -keystore \"%s\" -storepass \"%s\"%n", alias, certFile, keyStore.getPath(), keyStore.getPassword()));
+            }
+            sbCertsList.append("@rem");
+            String strKeyStoreScript = sbKeyStoreScript.toString();
+            strKeyStoreScript = strKeyStoreScript.replace("{KEYSTORE_NAME}", keyStore.getName());
+            strKeyStoreScript = strKeyStoreScript.replace("{KEYSTORE_PATH}", keyStore.getPath());
+            strKeyStoreScript = strKeyStoreScript.replace("@rem {CERTS}", sbCertsList);
+            sbInstallScript.append("\n\n");
+            sbInstallScript.append(strKeyStoreScript);
+        }
+
+        String installScript = sbInstallScript.toString();
+        System.out.println("INSTALL SCRIPT:");
+        System.out.println(installScript);
     }
 
     private void installAsCurrentUser(List<Cert> certs, List<KeyStore> keyStores) throws Exception {
@@ -119,7 +162,7 @@ public class InstallCertService implements Serializable {
 
                 for (int i = 0; i < certs.size(); i++) {
                     Cert cert = certs.get(i);
-                    String alias = cert.getUrl() + "-" + (i + 1) + "-" + new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS").format(new Date());
+                    String alias = getAlias(cert, i);
 
                     java.security.KeyStore localKeyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
 
@@ -144,6 +187,10 @@ public class InstallCertService implements Serializable {
             // if all failed show a failed message
             throw new RuntimeException("Error installing certificate(s).  See exception message for details...", e);
         }
+    }
+
+    private static String getAlias(Cert cert, int certIndex) {
+        return cert.getUrl() + "-" + (certIndex + 1) + "-" + new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS").format(new Date());
     }
 
     private JComponent buildExceptionViewer(Exception e) {

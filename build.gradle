@@ -112,7 +112,7 @@ task executableJarRelease(type: Zip, group: 'build') {
     dependsOn runnableJar
     println runnableJar.outputs.files.singleFile
     from runnableJar.outputs.files.singleFile
-    from file ("CertLoader-${version}-ExecutableJar.bat")
+    from file("CertLoader.bat")
     archiveName "CertLoader-${version}-ExecutableJar.zip"
     destinationDir(file('/release/bin'))
 }
