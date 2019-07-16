@@ -1,5 +1,6 @@
 package com.scarlatti.certloader.services;
 
+import com.intellij.ide.ui.EditorOptionsTopHitProvider;
 import com.scarlatti.certloader.exceptions.AccessDeniedException;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.RootExecutor;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.UserCanceledException;
@@ -49,14 +50,14 @@ public class InstallCertService implements Serializable {
             if (keyStores.size() > 0) {
                 try {
                     installWithBat(certs, keyStores);
-                    installAsCurrentUser(certs, keyStores);
+//                    installAsCurrentUser(certs, keyStores);
                 } catch (AccessDeniedException e) {
                     installAsRoot(certs, keyStores);
                 }
             }
 
             // if all were successful show a success message.
-            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(parent), "Successfully installed " + certs.size() + " certificate(s) to " + keyStores.size() + " key stores.");
+//            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(parent), "Successfully installed " + certs.size() + " certificate(s) to " + keyStores.size() + " key stores.");
 
         } catch (UserCanceledException e) {
             e.printStackTrace();
@@ -75,35 +76,89 @@ public class InstallCertService implements Serializable {
      * @param keyStores the key stores to install the certs into
      */
     private void installWithBat(List<Cert> certs, List<KeyStore> keyStores) {
+        // build the install script
+        try {
+            String correlationId = new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS").format(new Date());
+            String installScript = buildInstallerBat(certs, keyStores, correlationId);
+            System.out.println("INSTALL SCRIPT:");
+            System.out.println(installScript);
+
+            Path installDir = workingDir.resolve("CertLoader-" + correlationId);
+            System.out.println("Saving files to " + installDir);
+            Files.createDirectories(installDir);
+
+            // save the cert files
+            for (int i = 0; i < certs.size(); i++) {
+                Cert cert = certs.get(i);
+                try {
+                    Files.write(installDir.resolve(buildCertFileName(cert, i, correlationId)), cert.getRawCert().getEncoded());
+                } catch (Exception e) {
+                    throw new RuntimeException("Error writing cert file for cert: " + cert, e);
+                }
+            }
+
+            // save the bat file
+            Files.write(installDir.resolve("InstallCerts.bat"), installScript.getBytes());
+
+            // save the readme file
+            Files.write(installDir.resolve("README.TXT"), resourceStr("/README.TXT").getBytes());
+
+            Desktop.getDesktop().open(installDir.toFile());
+        } catch (Exception e) {
+            throw new RuntimeException("Error installing certs with .bat file", e);
+        }
+    }
+
+    private String buildCertFileName(Cert cert, int index, String correlationId) {
+        String alias = getAlias(cert, index, correlationId);
+        return alias.replace("https://", "").replace("/", ".").replace(":", ".") + ".cer";
+    }
+
+    private String buildInstallerBat(List<Cert> certs, List<KeyStore> keyStores, String correlationId) {
         StringBuilder sbInstallScript = new StringBuilder(resourceStr("/InstallCerts.template.bat"));
+        Path installDir = workingDir.resolve("CertLoader-" + correlationId);
 
-        String strTimestamp = new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS").format(new Date());
-        Path installDir = workingDir.resolve("CertLoader-" + strTimestamp);
-
+        StringBuilder sbCommands = new StringBuilder();
         for (KeyStore keyStore : keyStores) {
             StringBuilder sbKeyStoreScript = new StringBuilder(resourceStr("/InstallCert.template.bat"));
             StringBuilder sbCertsList = new StringBuilder();
             sbKeyStoreScript.append("\n");
             for (int i = 0; i < certs.size(); i++) {
                 Cert cert = certs.get(i);
-                String alias = getAlias(cert, i);
-                String fileName = alias.replace("https://", "").replace("/", ".").replace(":", ".");
+                String alias = getAlias(cert, i, correlationId);
+                String fileName = buildCertFileName(cert, i, correlationId);
                 Path certFile = installDir.resolve(fileName);
                 sbCertsList.append("@rem - " + cert.getUrl() + "\n");
-                sbKeyStoreScript.append(format("\"%%KEYTOOL%%\" -import -alias \"%s\" -file \"%s\" -keystore \"%s\" -storepass \"%s\"%n", alias, certFile, keyStore.getPath(), keyStore.getPassword()));
+                sbKeyStoreScript.append(format("\"%%KEYTOOL%%\" -import -alias \"%s\" -file \"%s\" -keystore \"%s\" -storepass \"%s\" -noprompt & %%ERRORCHECK%% %n", alias, certFile, keyStore.getPath(), keyStore.getPassword()));
             }
             sbCertsList.append("@rem");
             String strKeyStoreScript = sbKeyStoreScript.toString();
             strKeyStoreScript = strKeyStoreScript.replace("{KEYSTORE_NAME}", keyStore.getName());
             strKeyStoreScript = strKeyStoreScript.replace("{KEYSTORE_PATH}", keyStore.getPath());
             strKeyStoreScript = strKeyStoreScript.replace("@rem {CERTS}", sbCertsList);
-            sbInstallScript.append("\n\n");
-            sbInstallScript.append(strKeyStoreScript);
+            sbCommands.append("\n\n");
+            sbCommands.append(strKeyStoreScript);
         }
 
-        String installScript = sbInstallScript.toString();
-        System.out.println("INSTALL SCRIPT:");
-        System.out.println(installScript);
+        String strInstallScript = sbInstallScript.toString();
+        strInstallScript = strInstallScript.replace("{COMMANDS}", sbCommands);
+
+        StringBuilder sbCertsList = new StringBuilder();
+        for (int i = 0; i < certs.size(); i++) {
+            Cert cert = certs.get(i);
+            sbCertsList.append("@rem - " + cert.getUrl() + "\n");
+        }
+        sbCertsList.append("@rem");
+        strInstallScript = strInstallScript.replace("@rem {CERTS}", sbCertsList);
+
+        StringBuilder sbKeyStores = new StringBuilder();
+        for (KeyStore keyStore : keyStores) {
+            sbKeyStores.append("@rem - " + keyStore.getName() + ": " + keyStore.getPath() + "\n");
+        }
+        sbKeyStores.append("@rem");
+        strInstallScript = strInstallScript.replace("@rem {KEYSTORES}", sbKeyStores);
+
+        return strInstallScript;
     }
 
     private void installAsCurrentUser(List<Cert> certs, List<KeyStore> keyStores) throws Exception {
@@ -162,7 +217,7 @@ public class InstallCertService implements Serializable {
 
                 for (int i = 0; i < certs.size(); i++) {
                     Cert cert = certs.get(i);
-                    String alias = getAlias(cert, i);
+                    String alias = getAlias(cert, i, new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS").format(new Date()));
 
                     java.security.KeyStore localKeyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
 
@@ -189,8 +244,8 @@ public class InstallCertService implements Serializable {
         }
     }
 
-    private static String getAlias(Cert cert, int certIndex) {
-        return cert.getUrl() + "-" + (certIndex + 1) + "-" + new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS").format(new Date());
+    private static String getAlias(Cert cert, int certIndex, String correlationId) {
+        return cert.getUrl() + "-" + (certIndex + 1) + "-" + correlationId;
     }
 
     private JComponent buildExceptionViewer(Exception e) {

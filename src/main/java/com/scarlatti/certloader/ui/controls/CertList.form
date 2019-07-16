@@ -59,7 +59,7 @@
             </constraints>
             <properties>
               <defaultCapable value="true"/>
-              <text value="Install Selected Certificate(s)"/>
+              <text value="Install Selected Certificate(s)..."/>
             </properties>
           </component>
         </children>
