@@ -93,7 +93,7 @@ task guiExe2(type: Launch4jLibraryTask, group: 'build') {
     icon = '../../resources/main/key2.ico'  // point to the folder within the build resources
     headerType = "gui"
     companyName = "Scarlatti"
-    manifest = "../../resources/main/application.manifest"
+//    manifest = "../../resources/main/application.manifest"
 
 }
 
