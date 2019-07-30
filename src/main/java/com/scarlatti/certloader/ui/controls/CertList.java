@@ -79,10 +79,14 @@ public class CertList implements UIComponent {
         if (!isLocalUrl) {
             url = formatUrl(url);
         }
-
-        urlLink.setText("<html><u>" + url + "</u></html>");
-
         this.url = url;
+
+        String displayUrl = url;
+        if (displayUrl.length() > 60) {
+            displayUrl = displayUrl.substring(0, 60) + "...";
+        }
+
+        urlLink.setText("<html><u>" + displayUrl + "</u></html>");
     }
 
     public static String formatUrl(String url) {

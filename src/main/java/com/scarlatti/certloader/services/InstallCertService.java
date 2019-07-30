@@ -1,6 +1,5 @@
 package com.scarlatti.certloader.services;
 
-import com.intellij.ide.ui.EditorOptionsTopHitProvider;
 import com.scarlatti.certloader.exceptions.AccessDeniedException;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.RootExecutor;
 import com.scarlatti.certloader.services.dyorgio.runAsRoot.UserCanceledException;
@@ -111,7 +110,7 @@ public class InstallCertService implements Serializable {
 
     private String buildCertFileName(Cert cert, int index, String correlationId) {
         String alias = getAlias(cert, index, correlationId);
-        return alias.replace("https://", "").replace("/", ".").replace(":", ".") + ".cer";
+        return alias.replace("https://", "").replace("/", ".").replace("\\", ".").replace(":", ".") + ".cer";
     }
 
     private String buildInstallerBat(List<Cert> certs, List<KeyStore> keyStores, String correlationId) {
